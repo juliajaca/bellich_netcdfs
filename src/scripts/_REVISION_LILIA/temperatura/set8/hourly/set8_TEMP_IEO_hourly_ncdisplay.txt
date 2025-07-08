@@ -1,0 +1,89 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set8_IEO\hourly\set8_TEMP_IEO_hourly.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'Three hourly datasets obtained with sea-temperature sensors.'
+           institution = 'Instituto Español de Oceanografía (IEO) and Universitat Politecnica de Valencia (UPV), Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain.'
+           project     = 'Smart Lagoon monitoring, PROJECT CHECK...'
+           source      = 'A quality control by manual inspection and deletion of suspect values was performed. DATA PROCESSING STANDARD CHECK...'
+           coordinates = 'Coordinates of the buoy are missing'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time    = 13965
+           depth_1 = 6
+           depth_2 = 3
+           depth_3 = 3
+Variables:
+    time                  
+           Size:       13965x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    depth_1               
+           Size:       6x1
+           Dimensions: depth_1
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth of thermistors sensors (dataset-1)'
+                       dataset_depth = '5 m'
+                       positive      = 'down'
+    depth_2               
+           Size:       3x1
+           Dimensions: depth_2
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth of dissolved oxygen sensors (dataset-2)'
+                       dataset_depth = '6.5 m'
+                       positive      = 'down'
+    depth_3               
+           Size:       3x1
+           Dimensions: depth_3
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth of conductivity sensors (dataset-3)'
+                       dataset_depth = '6 m'
+                       positive      = 'down'
+    seawater_temperature_1
+           Size:       6x13965
+           Dimensions: depth_1,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'sea_water_temperature dataset-1, data from a thermistor'
+                       dataset_depth = '5 m'
+                       missing_value = -9999
+                       comment       = 'Seawater temperature measured at a fixed location (buoy); vertical profiles collected over time at depths specified by the variable depth_1.'
+    seawater_temperature_2
+           Size:       3x13965
+           Dimensions: depth_2,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'sea_water_temperature dataset-2, data from a dissolved oxygen sensor'
+                       dataset_depth = '6.5 m'
+                       missing_value = -9999
+                       comment       = 'Seawater temperature measured at a fixed location (buoy); vertical profiles collected over time at depths specified by the variable depth_2.'
+    seawater_temperature_3
+           Size:       3x13965
+           Dimensions: depth_3,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'sea_water_temperature dataset-3, data from a conductivity sensor'
+                       dataset_depth = '6 m'
+                       missing_value = -9999
+                       comment       = 'Seawater temperature measured at a fixed location (buoy); vertical profiles collected over time at depths specified by the variable depth_3.'

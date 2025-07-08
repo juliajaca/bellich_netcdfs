@@ -1,0 +1,45 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'nutrientes tres estaciones--DIN'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+	notes           = 'A -1 value means LOWER THAN DETECTION LIMIT'
+	coordinates     = 'Station A --> Lat: 37,792949, Lon: -0,78331724 
+
+Station B --> Lat: 37,698052, Lon: -0,78319145 
+
+Station C --> Lat: 37,667697, Lon:-0,75235986'
+
+Dimensions:
+	time            = 49
+	unit_char_len   = 9
+	station         = 3
+
+Variables:
+    time           
+	Size: (49,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    station        
+	Size: (3, 9)
+	Dimensions: station, unit_char_len
+	Datatype: |S1
+	Attributes:
+		standard_name   = 'station'
+		_Encoding       = 'ascii'
+    din            
+	Size: (49, 3)
+	Dimensions: time, station
+	Datatype: float64
+	Attributes:
+		standard_name   = 'din'
+		unit            = 'XXXX'

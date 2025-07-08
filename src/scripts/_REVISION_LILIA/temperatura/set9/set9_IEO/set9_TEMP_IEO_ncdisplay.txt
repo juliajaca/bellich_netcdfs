@@ -1,0 +1,67 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set9_IEO\set9_TEMP_IEO.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'Two hourly datasets obtained with thermistor and earth conductivity sensors'
+           institution = 'Instituto Español de Oceanografía (IEO) and Universitat Politecnica de Valencia (UPV), Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain.'
+           project     = 'Smart Lagoon monitoring buoy, PROJECT CHECK...'
+           source      = 'QUALITY CONTROL AND DATA PROCESSING CHECK...'
+           coordinates = 'Coordinates of the buoy are missing'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time    = 15758
+           depth_1 = 6
+           depth_2 = 3
+Variables:
+    time                  
+           Size:       15758x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    depth_1               
+           Size:       6x1
+           Dimensions: depth_1
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth of 100KSA thermistor sensors.'
+                       dataset_depth = '5 m'
+                       positive      = 'down'
+    depth_2               
+           Size:       3x1
+           Dimensions: depth_2
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth of EC-1550 ESS earth conductivity sensors'
+                       dataset_depth = '6 m'
+                       positive      = 'down'
+    seawater_temperature_1
+           Size:       6x15758
+           Dimensions: depth_1,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'sea_water_temperature from the Beta Therm 100KSA thermistor sensor'
+                       dataset_depth = '5 m'
+                       missing_value = -9999
+                       comment       = 'Seawater temperature measured at a fixed location (buoy); vertical profiles collected over time at depths specified by the variable depth_1.'
+    seawater_temperature_2
+           Size:       3x15758
+           Dimensions: depth_2,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'sea_water_temperature from EC-1550 ESS Earth Conductivity sensor'
+                       dataset_depth = '6 m'
+                       missing_value = -9999
+                       comment       = 'Seawater temperature measured at a fixed location (buoy); vertical profiles collected over time at depths specified by the variable depth_2.'

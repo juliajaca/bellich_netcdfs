@@ -1,0 +1,48 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'resumen_belich_bg_NID'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+	coordinates     = 'Station A --> Lat: 37.791433, Lon: -0.78155 
+
+    Station B --> Lat: 37.70949, Lon: -0.7851 
+
+    Station C --> Lat: 37.667317, Lon: -0.755215 
+
+    Station M --> Lat: 37.710278, Lon: -0.831111 
+'
+	depth           = '4m'
+
+Dimensions:
+	time            = 83
+	unit_char_len   = 1
+	station         = 4
+
+Variables:
+    time           
+	Size: (83,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    station        
+	Size: (4, 1)
+	Dimensions: station, unit_char_len
+	Datatype: |S1
+	Attributes:
+		standard_name   = 'station'
+		_Encoding       = 'ascii'
+    NID            
+	Size: (83, 4)
+	Dimensions: time, station
+	Datatype: float64
+	Attributes:
+		standard_name   = 'NID'
+		unit            = 'XXXX'

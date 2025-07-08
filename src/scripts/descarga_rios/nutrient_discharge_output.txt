@@ -1,0 +1,44 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'Albujon nutrient discharge'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	poject          = 'XXXX'
+	source          = 'Confederación Hidrográfica del Segura (CHS)'
+	conventions     = 'XXX'
+
+Dimensions:
+	time            = 445
+
+Variables:
+    time           
+	Size: (445,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    conductivity   
+	Size: (445,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		standard_name   = 'conductivity 20 ºC'
+		unit            = 'µS/cm'
+    nitrate        
+	Size: (445,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		standard_name   = 'nitrate'
+		unit            = 'mg/L'
+    fosfate        
+	Size: (445,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		standard_name   = 'fosfate'
+		unit            = 'mg/L'

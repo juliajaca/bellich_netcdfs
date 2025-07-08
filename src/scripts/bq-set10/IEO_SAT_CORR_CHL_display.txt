@@ -1,0 +1,58 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'sentinel_3_clorofila_bela'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'IEO_SAT'
+	source          = 'Copernicus'
+	conventions     = 'CF-1.8'
+
+Dimensions:
+	time            = 117
+	latitud         = 240
+	longitud        = 177
+
+Variables:
+    time           
+	Size: (117,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    latitud        
+	Size: (240,)
+	Dimensions: latitud
+	Datatype: float64
+	Attributes:
+		units           = 'degrees north'
+		standard_name   = 'latitud'
+    longitud       
+	Size: (177,)
+	Dimensions: longitud
+	Datatype: float64
+	Attributes:
+		units           = 'degrees east'
+		standard_name   = 'longitud'
+    chlorophyll    
+	Size: (117, 240, 177)
+	Dimensions: time, latitud, longitud
+	Datatype: float64
+	Attributes:
+		units           = 'mg m-3'
+		standard_name   = 'chlorophyll_concentration_in_sea_water'
+		comment         = 'BELA chlorophyll concentration algorithm used to estimate CHL.'
+		cell_methods    = '1. Spatial mesh definition:
+Calculates the average spatial resolution (distance between consecutive points).
+Generate a regular grid (lat/lon).
+Applies a geographic mask (based on bathymetry and coastline) to delimit the area of interest.
+2. Fill in nans for each date:
+Clears duplicates by coordinates.
+Median distances in latitude and longitude have been calculated and if there is a jump between values of more than 1.5 * median, a lat lon point with nan value was created at a median distance.
+3. Mesh creation to interpolate:
+Interpolates the chlorophyll values on the generated mesh using the nearest method.
+Uses a cKDTree to calculate the minimum distance from each mesh point to the real data.
+Applies a distance mask to eliminate unreliable interpolations (based on the median of real distances * 0.75).'

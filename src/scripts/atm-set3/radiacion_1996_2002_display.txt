@@ -1,0 +1,47 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'radiacion_1996_2002'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+	indicativo      = '7178I'
+	altitud         = '61'
+	ind_syn         = '8430'
+	nom_eg          = 'AEMET'
+	datum           = 'ETRS89'
+	coordinates     = 'C_X --> 660598, C_Y --> 4207610
+
+Longitud--> 110152, Latitud --> 380007'
+
+Dimensions:
+	time            = 9811
+	unit_char_len   = 7
+	variable_radiacion = 53
+
+Variables:
+    radiacion      
+	Size: (9811, 53)
+	Dimensions: time, variable_radiacion
+	Datatype: float64
+	Attributes:
+		standard_name   = 'radiacion'
+		unit            = 'XXXX'
+    time           
+	Size: (9811,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    variable_radiacion
+	Size: (53, 7)
+	Dimensions: variable_radiacion, unit_char_len
+	Datatype: |S1
+	Attributes:
+		standard_name   = 'variable_radiacion'
+		_Encoding       = 'ascii'

@@ -1,0 +1,89 @@
+# %%
+from netCDF4 import Dataset, date2num,num2date, stringtochar
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+# %%
+data = pd.read_excel('C:/Users/Julia/Documents/VSCODE_BELLICH/src/datos/bq/set10/sentinel_3_clorofila_BELA.xlsx',  dtype={  
+"clorofila": "float64",}, parse_dates= ['fecha'])
+# %%
+fechas_unicas = np.sort(data["fecha"].unique())
+fechas_unicas_ts = pd.to_datetime(fechas_unicas)
+latitudes = np.sort(data["latitud"].unique())
+longitudes = np.sort(data["longitud"].unique())
+
+epoch = pd.Timestamp('1970-01-01')
+# %%
+# Calcular la diferencia en días
+dias_desde_1970 = (fechas_unicas_ts - epoch) / pd.Timedelta(days=1)
+
+# %%
+# %%
+ncfile = Dataset('sentinel_3_clorofila_bela.nc', mode='w', format='NETCDF3_CLASSIC')
+print(ncfile)
+
+# %% CREAR ATRIBUTOS GLOBALES
+ncfile.title='sentinel 3 clorofila bela'
+ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
+ncfile.domain= 'Mar menor coastal lagoon'
+ncfile.poject = 'XXX'
+ncfile.source = 'XXX'
+ncfile.conventions = 'XXX'
+
+
+# Crear dimensiones
+ncfile.createDimension("time", len(fechas_unicas)) 
+ncfile.createDimension("latitud", len(latitudes)) 
+ncfile.createDimension("longitud", len(longitudes))
+
+for dim in ncfile.dimensions.items():
+    print(dim)
+# %%
+time_var = ncfile.createVariable('time', np.float64, ('time'))
+time_var.units= "days since 1970-01-01 00:00:0"
+time_var.standard_name = "time"
+time_var.calendar = 'gregorian'
+# date_var[:] = dias_desde_1970.values
+
+lat_var = ncfile.createVariable('latitud', np.float64, ('latitud',))
+lat_var.units = 'degrees north'
+lat_var.standard_name = 'latitud'
+# lat_var[:] = latitudes
+
+lon_var = ncfile.createVariable('longitud', np.float64, ('longitud',))
+lon_var.units = 'degrees east'
+lon_var.standard_name = 'longitud'
+# lon_var[:] = longitudes
+
+chl_var = ncfile.createVariable('chl', np.float32, ("time", "latitud", "longitud"), fill_value=None)
+chl_var.units = 'XXXXX'
+chl_var.standard_name = 'clorofila'
+
+# %%
+# Escribir datos en el NetCDF (fila por fila)
+for i, fecha in enumerate(fechas_unicas_ts):
+    # Filtrar datos de la fecha actual
+    sub_df = data[data["fecha"] == fecha]
+    
+    # Extraer valores únicos de latitud y longitud
+    latitudes = sub_df["latitud"].unique()
+    longitudes = sub_df["longitud"].unique()
+    
+    # Asignar valores a las variables (escribiendo por partes)
+    time_var[i] = dias_desde_1970.iloc[i]
+    lat_var[:] = latitudes
+    lon_var[:] = longitudes
+
+    # Crear una matriz vacía para la clorofila
+    chl_matrix = np.full((len(latitudes), len(longitudes)), np.nan, dtype=np.float32)
+    
+    # Llenar la matriz con los valores de clorofila
+    for j, (lat, lon, chl) in enumerate(zip(sub_df["latitud"], sub_df["longitud"], sub_df["clorofila"])):
+        lat_idx = np.where(latitudes == lat)[0][0]
+        lon_idx = np.where(longitudes == lon)[0][0]
+        chl_matrix[lat_idx, lon_idx] = chl  # Asignar valor de clorofila
+    
+    # Guardar la matriz en el NetCDF sin cargar todo en RAM
+    chl_var[i, :, :] = chl_matrix
+
+# %%

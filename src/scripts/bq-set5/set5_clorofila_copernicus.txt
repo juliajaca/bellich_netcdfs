@@ -1,0 +1,30 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'set 5 clorofila satelital corregida copernicus'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+
+Dimensions:
+	time            = 252
+
+Variables:
+    time           
+	Size: (252,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    clorofila_copernicus
+	Size: (252,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		standard_name   = 'clorofila satelital corregida'
+		unit            = 'mg m^3'

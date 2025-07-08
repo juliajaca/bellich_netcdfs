@@ -1,0 +1,30 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'set 5 clorofila medias sd in situ'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+
+Dimensions:
+	time            = 187
+
+Variables:
+    time           
+	Size: (187,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    chla_in_situ   
+	Size: (187,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		standard_name   = 'Chla_in_situ'
+		unit            = 'mg m^3'

@@ -1,0 +1,56 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set12_IEO_EUROGEL\TEMP\set12_TEMP_IEO.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'Data obtained with XXX instrument'
+           institution = 'Instituto Español de Oceanografía (IEO)'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           project     = 'EUROGEL further information? ...'
+           source      = 'In-situ data collection. DATA PROCESSING STANDARD CHECK...'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time      = 95
+           latitude  = 27
+           longitude = 27
+           depth     = 29
+Variables:
+    time                
+           Size:       95x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    latitude            
+           Size:       27x1
+           Dimensions: latitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_north'
+                       standard_name = 'latitude'
+    longitude           
+           Size:       27x1
+           Dimensions: longitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_east'
+                       standard_name = 'longitude'
+    depth               
+           Size:       29x1
+           Dimensions: depth
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       positive      = 'down, 0 indicate sea-surface'
+    seawater_temperature
+           Size:       27x27x29x95
+           Dimensions: longitude,latitude,depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       missing_value = -9999
+                       comment       = 'sea_water_temperature measured at 27 fixed stations (unique lon-lat pairs). Depth profiles were collected at each station; however, the depth levels are not uniform across stations. Each station has its own set of sampled depths.'

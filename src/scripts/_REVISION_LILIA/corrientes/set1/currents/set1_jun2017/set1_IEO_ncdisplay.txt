@@ -1,0 +1,94 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\currents\set1_jun2017\set1_IEO.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'Sea water current profiles collected at 42 locations during a transect survey in June 2017'
+           institution = 'Instituto Español de Oceanografía (IEO) Canarias, Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           project     = 'CHECK...'
+           source      = 'In-situ data collection. DATA PROCESSING STANDARD CHECK...'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time       = 40
+           latitude   = 40
+           longitude  = 40
+           depth      = 70
+           trajectory = 1
+Variables:
+    trajectory                     
+           Size:       1x1
+           Dimensions: trajectory
+           Datatype:   int32
+           Attributes:
+                       cf_role   = 'trajectory_id'
+                       long_name = 'June  2017 transect'
+                       units     = '1'
+    time                           
+           Size:       40x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    latitude                       
+           Size:       40x1
+           Dimensions: latitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_north'
+                       standard_name = 'latitude'
+    longitude                      
+           Size:       40x1
+           Dimensions: longitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_east'
+                       standard_name = 'longitude'
+    depth                          
+           Size:       70x1
+           Dimensions: depth
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'Depth below sea surface'
+                       positive      = 'down'
+    u_component                    
+           Size:       70x40
+           Dimensions: depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'm s-1'
+                       standard_name = 'eastward_sea_water_velocity'
+                       missing_value = -9999
+                       comment       = ' East-west velocity component per depth bin per profile; positive values indicate flow toward the east.'
+    v_component                    
+           Size:       70x40
+           Dimensions: depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'm s-1'
+                       standard_name = 'northward_sea_water_velocity'
+                       missing_value = -9999
+                       comment       = ' North-south velocity component per depth bin per profile; positive values indicate flow toward the north.'
+    sea_water_speed                
+           Size:       70x40
+           Dimensions: depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'm s-1'
+                       standard_name = 'sea_water_speed'
+                       long_name     = 'Magnitude of Sea Water Velocity'
+                       missing_value = -9999
+    direction_of_sea_water_velocity
+           Size:       70x40
+           Dimensions: depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'degree'
+                       standard_name = 'direction_of_sea_water_velocity'
+                       long_name     = 'Direction from Which the Sea Water is Coming'
+                       missing_value = -9999
+                       comment       = 'Direction following oceanographic convention: degrees true, measured clockwise from North.'

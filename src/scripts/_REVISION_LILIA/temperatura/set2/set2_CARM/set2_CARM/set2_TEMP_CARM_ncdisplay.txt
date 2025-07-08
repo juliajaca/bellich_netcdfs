@@ -1,0 +1,82 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set2_CARM\set2_TEMP_CARM.nc
+Format:
+           classic
+Global Attributes:
+           title       = ' CTD oceanography sonde'
+           institution = 'Comunidad Autonoma de la Región de Murcia (CARM), Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           source      = 'In-situ data collection. DATA PROCESSING STANDARD CHECK...'
+           coordinates = 'Provided by the Instituto Murciano de Investigación y Desarrollo Agrario y Medioambiental (IMIDA) through the https://canalmarmenor.carm.es/contacto/'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time      = 26
+           latitude  = 21
+           longitude = 21
+           Northing  = 21
+           Easting   = 21
+           depth     = 11
+Variables:
+    time                
+           Size:       26x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    latitude            
+           Size:       21x1
+           Dimensions: latitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_north'
+                       standard_name = 'latitude'
+    longitude           
+           Size:       21x1
+           Dimensions: longitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_east'
+                       standard_name = 'longitude'
+    Y                   
+           Size:       21x1
+           Dimensions: Northing
+           Datatype:   double
+           Attributes:
+                       units           = 'meters'
+                       standard_name   = 'projection_y_coordinate'
+                       long_name       = 'Northing'
+                       axis            = 'Y'
+                       mapping_name    = 'UTM'
+                       utm_zone_number = '30'
+                       utm_zone_letter = 'S'
+    X                   
+           Size:       21x1
+           Dimensions: Easting
+           Datatype:   double
+           Attributes:
+                       units           = 'meters'
+                       standard_name   = 'projection_x_coordinate'
+                       long_name       = 'Easting'
+                       axis            = 'X'
+                       mapping_name    = 'UTM'
+                       utm_zone_number = '30'
+                       utm_zone_letter = 'S'
+    depth               
+           Size:       11x1
+           Dimensions: depth
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       positive      = 'down'
+    seawater_temperature
+           Size:       21x21x11x26
+           Dimensions: longitude,latitude,depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       missing_value = -9999
+                       comment       = 'Sea temperature vertical profiles collected using a vessel-mounted CTD at 21 fixed stations identified by unique geographic coordinates (longitude, latitude) and UTM coordinates (X, Y).'

@@ -1,0 +1,46 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'sentinel_3_clorofila_bela'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	poject          = 'XXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+
+Dimensions:
+	time            = 117
+	latitud         = 240
+	longitud        = 177
+
+Variables:
+    time           
+	Size: (117,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    latitud        
+	Size: (240,)
+	Dimensions: latitud
+	Datatype: float64
+	Attributes:
+		units           = 'degrees north'
+		standard_name   = 'latitud'
+    longitud       
+	Size: (177,)
+	Dimensions: longitud
+	Datatype: float64
+	Attributes:
+		units           = 'degrees east'
+		standard_name   = 'longitud'
+    clorofila      
+	Size: (117, 240, 177)
+	Dimensions: time, latitud, longitud
+	Datatype: float64
+	Attributes:
+		units           = 'XXXXX'
+		standard_name   = 'clorofila'

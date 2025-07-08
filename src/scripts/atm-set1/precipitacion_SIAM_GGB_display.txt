@@ -1,0 +1,60 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'precipitacion_SIAM_GGB'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+
+Dimensions:
+	time            = 78168
+	unit_char_len   = 4
+	station         = 12
+	name_full_strlen = 34
+
+Variables:
+    precipitacion  
+	Size: (78168, 12)
+	Dimensions: time, station
+	Datatype: float64
+	Attributes:
+		standard_name   = 'precipitación'
+		unit            = 'XXXX'
+    time           
+	Size: (78168,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    station        
+	Size: (12, 4)
+	Dimensions: station, unit_char_len
+	Datatype: |S1
+	Attributes:
+		standard_name   = 'station'
+		_Encoding       = 'ascii'
+    station_name   
+	Size: (12, 34)
+	Dimensions: station, name_full_strlen
+	Datatype: |S1
+	Attributes:
+		_Encoding       = 'ascii'
+    station_latitude
+	Size: (12,)
+	Dimensions: station
+	Datatype: float64
+	Attributes:
+		units           = 'degrees_north'
+		standard_name   = 'latitude'
+    station_longitude
+	Size: (12,)
+	Dimensions: station
+	Datatype: float64
+	Attributes:
+		units           = 'degrees_east'
+		standard_name   = 'longitude'

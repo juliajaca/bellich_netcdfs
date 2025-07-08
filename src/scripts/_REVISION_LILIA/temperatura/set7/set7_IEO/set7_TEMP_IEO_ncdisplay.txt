@@ -1,0 +1,32 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set7_IEO\set7_TEMP_IEO.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'Data obtained with HOBO sea-temperature sensor'
+           institution = 'Instituto Español de Oceanografía (IEO), Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           project     = 'PROJECT CHECK...'
+           source      = 'DATA PROCESSING STANDARD CHECK...'
+           coordinates = 'Location of the sensor missing...'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time = 4653
+Variables:
+    time                
+           Size:       4653x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    seawater_temperature
+           Size:       4653x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       missing_value = -9999
+                       comment       = 'Seawater temperature measured at a fixed location, sensor was located between 1.5 and 3 meters depth.'

@@ -1,0 +1,164 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set4_IEO_DMMEM\set4_TEMP_IEO_DMMEM.nc
+Format:
+           classic
+Global Attributes:
+           title       = ' Time series obtain with XXX instrument'
+           institution = 'Instituto Español de Oceanografía (IEO)'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           project     = 'Mar Menor Eutrophication Monitoring (DMMEM) CHECK...'
+           source      = 'In-situ data collection. DATA PROCESSING STANDARD CHECK...'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time        = 130
+           latitude_1  = 2
+           longitude_1 = 2
+           Northing_1  = 2
+           Easting_1   = 2
+           latitude_2  = 2
+           longitude_2 = 2
+           Northing_2  = 2
+           Easting_2   = 2
+           depth_1     = 3
+           depth_2     = 3
+Variables:
+    time                  
+           Size:       130x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    latitude_1            
+           Size:       2x1
+           Dimensions: latitude_1
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_north'
+                       standard_name = 'latitude'
+                       site_depth    = '5 m'
+                       comment       = 'values for seawater_temperature_1'
+    longitude_1           
+           Size:       2x1
+           Dimensions: longitude_1
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_east'
+                       standard_name = 'longitude'
+                       site_depth    = '5 m'
+                       comment       = 'values for seawater_temperature_1'
+    latitude_2            
+           Size:       2x1
+           Dimensions: latitude_2
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_north'
+                       standard_name = 'latitude'
+                       site_depth    = '6 m'
+                       comment       = 'values for seawater_temperature_2'
+    longitude_2           
+           Size:       2x1
+           Dimensions: longitude_2
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_east'
+                       standard_name = 'longitude'
+                       site_depth    = '6 m'
+                       comment       = 'values for seawater_temperature_2'
+    Y_1                   
+           Size:       2x1
+           Dimensions: Northing_1
+           Datatype:   double
+           Attributes:
+                       units           = 'meters'
+                       standard_name   = 'projection_y_coordinate'
+                       long_name       = 'Northing'
+                       axis            = 'Y'
+                       mapping_name    = 'UTM'
+                       utm_zone_number = '30'
+                       utm_zone_letter = 'S'
+                       site_depth      = '5 m'
+                       comment         = 'values for seawater_temperature_1'
+    X_1                   
+           Size:       2x1
+           Dimensions: Easting_1
+           Datatype:   double
+           Attributes:
+                       units           = 'meters'
+                       standard_name   = 'projection_x_coordinate'
+                       long_name       = 'Easting'
+                       axis            = 'X'
+                       mapping_name    = 'UTM'
+                       utm_zone_number = '30'
+                       utm_zone_letter = 'S'
+                       site_depth      = '5 m'
+                       comment         = 'values for seawater_temperature_1'
+    Y_2                   
+           Size:       2x1
+           Dimensions: Northing_2
+           Datatype:   double
+           Attributes:
+                       units           = 'meters'
+                       standard_name   = 'projection_y_coordinate'
+                       long_name       = 'Northing'
+                       axis            = 'Y'
+                       mapping_name    = 'UTM'
+                       utm_zone_number = '30'
+                       utm_zone_letter = 'S'
+                       site_depth      = '6 m'
+                       comment         = 'values for seawater_temperature_2'
+    X_2                   
+           Size:       2x1
+           Dimensions: Easting_2
+           Datatype:   double
+           Attributes:
+                       units           = 'meters'
+                       standard_name   = 'projection_x_coordinate'
+                       long_name       = 'Easting'
+                       axis            = 'X'
+                       mapping_name    = 'UTM'
+                       utm_zone_number = '30'
+                       utm_zone_letter = 'S'
+                       site_depth      = '6 m'
+                       comment         = 'values for seawater_temperature_2'
+    depth_1               
+           Size:       3x1
+           Dimensions: depth_1
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       positive      = 'down, 0 value indicate sea-surface'
+                       site_depth    = '5 m'
+                       comment       = ' depths for seawater_temperature_1'
+    depth_2               
+           Size:       3x1
+           Dimensions: depth_2
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       positive      = 'down, 0 value indicate sea-surface'
+                       site_depth    = '6 m'
+                       comment       = 'depths for seawater_temperature_2'
+    seawater_temperature_1
+           Size:       2x3x130
+           Dimensions: longitude_1,depth_1,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       missing_value = -9999
+                       site_depth    = '5 m'
+                       comment       = 'Seawater temperature data collected at two fixed stations, identified by geographic coordinates (longitude_1, latitude_1) and UTM coordinates (X_1, Y_1). Each station was sampled over time with vertical profiles, but the depth levels vary between stations and are not consistent.'
+    seawater_temperature_2
+           Size:       2x3x130
+           Dimensions: longitude_1,depth_2,time
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       missing_value = -9999
+                       site_depth    = '6 m'
+                       comment       = 'Seawater temperature data collected at two fixed stations, identified by geographic coordinates (longitude_2, latitude_2) and UTM coordinates (X_2, Y_2). Each station was sampled over time with vertical profiles, but the depth levels vary between stations and are not consistent.'

@@ -1,0 +1,101 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\temperature\set10_IEO_CTD\set10_TEMP_IEO.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'Estacio channel anchoring campaign with a CTD oceanography sonde'
+           institution = 'Instituto Español de Oceanografía (IEO) Canarias, Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           project     = 'CHECK...'
+           source      = 'In-situ data collection. DATA PROCESSING STANDARD CHECK...'
+           coordinates = 'CHECK'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time_1  = 5030
+           time_2  = 1790
+           time_3  = 5199
+           depth_1 = 5030
+           depth_2 = 1790
+           depth_3 = 5199
+Variables:
+    time_1                
+           Size:       5030x1
+           Dimensions: time_1
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+                       long_name     = 'time from February 2017 anchoring campaign'
+    time_2                
+           Size:       1790x1
+           Dimensions: time_2
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+                       long_name     = 'time from June 2017 anchoring campaign'
+    time_3                
+           Size:       5199x1
+           Dimensions: time_3
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+                       long_name     = 'time from September 2017 anchoring campaign'
+    depth_1               
+           Size:       5030x1
+           Dimensions: depth_1
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth from February 2017 anchoring campaign'
+                       positive      = 'down'
+    depth_2               
+           Size:       1790x1
+           Dimensions: depth_2
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth from June 2017 anchoring campaign'
+                       positive      = 'down'
+    depth_3               
+           Size:       5199x1
+           Dimensions: depth_3
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'depth from September 2017 anchoring campaign'
+                       positive      = 'down'
+    seawater_temperature_1
+           Size:       5030x1
+           Dimensions: time_1
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'data from February 2017 anchoring campaign'
+                       missing_value = -9999
+    seawater_temperature_2
+           Size:       1790x1
+           Dimensions: time_2
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'data from June 2017 anchoring campaign'
+                       missing_value = -9999
+    seawater_temperature_3
+           Size:       5199x1
+           Dimensions: time_3
+           Datatype:   double
+           Attributes:
+                       units         = 'Celsius'
+                       standard_name = 'sea_water_temperature'
+                       long_name     = 'data from September 2017 anchoring campaign'
+                       missing_value = -9999

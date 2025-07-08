@@ -1,0 +1,66 @@
+Source:
+           C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Hydrodynamics\salinity\set1_feb2017_IEO\set1_feb2017_SAL_IEO.nc
+Format:
+           classic
+Global Attributes:
+           title       = 'CTD profiles collected at 42 locations during a transect survey.'
+           institution = 'Instituto Español de Oceanografía (IEO) Canarias, Spain'
+           domain      = 'Mar Menor coastal lagoon, Spain'
+           project     = 'CHECK...'
+           source      = 'In-situ data collection. DATA PROCESSING STANDARD CHECK...'
+           Conventions = 'CF-1.6'
+Dimensions:
+           time       = 42
+           latitude   = 42
+           longitude  = 42
+           depth      = 70
+           trajectory = 1
+Variables:
+    trajectory       
+           Size:       1x1
+           Dimensions: trajectory
+           Datatype:   int32
+           Attributes:
+                       cf_role   = 'trajectory_id'
+                       long_name = 'February 2017 transect'
+                       units     = '1'
+    time             
+           Size:       42x1
+           Dimensions: time
+           Datatype:   double
+           Attributes:
+                       units         = 'days since 1970-01-01 00:00:00'
+                       calendar      = 'gregorian'
+                       standard_name = 'time'
+    latitude         
+           Size:       42x1
+           Dimensions: latitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_north'
+                       standard_name = 'latitude'
+    longitude        
+           Size:       42x1
+           Dimensions: longitude
+           Datatype:   double
+           Attributes:
+                       units         = 'degrees_east'
+                       standard_name = 'longitude'
+    depth            
+           Size:       70x42
+           Dimensions: depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'meters'
+                       standard_name = 'depth'
+                       long_name     = 'Depth below sea surface'
+                       positive      = 'down'
+    seawater_salinity
+           Size:       70x42
+           Dimensions: depth,time
+           Datatype:   double
+           Attributes:
+                       units         = 'PSU'
+                       standard_name = 'sea_water_practical_salinity'
+                       missing_value = -9999
+                       comment       = 'sea_water_practical_salinity collected using a vessel-mounted CTD during a transect survey in February 2017'

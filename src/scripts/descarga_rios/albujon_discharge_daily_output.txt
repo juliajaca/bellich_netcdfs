@@ -1,0 +1,65 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'Albujon flow and discharge daily'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	poject          = 'XXX'
+	source          = 'Confederación Hidrográfica del Segura (CHS) and https://canalmarmenor.carm.es/monitorizacion/monitorizacion-de-parametros/aforos/'
+	conventions     = 'XXX'
+	coordinates     = 'ETRS89 / UTM zone 30N --> EPSG:25830: [688529.72,4176466.36] 
+ETRS89 --> EPSG:4258: [-0.861019,37.716068] 
+WGS84 --> EPSG:4326: [-0.861019,37.716068]'
+	notes           = 'DATA CHS --> Flow measured each 5' by CHS authomatic gauge; daily mean of flows. 
+DATA CARM --> Flow measured in a time point that date
+The discharges are calculated integrating the instantaneous flow for the whole day
+Stream gauge in the mouth'
+
+Dimensions:
+	time            = 911
+
+Variables:
+    time           
+	Size: (911,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    flow_chs       
+	Size: (911,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'm³/s'
+		standard_name   = 'Mean flow'
+    disch_chs      
+	Size: (911,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'm³'
+		standard_name   = 'Accumulated daily discharge'
+    flow_carm      
+	Size: (911,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'm³/s'
+		standard_name   = 'Mean flow'
+    disch_carm     
+	Size: (911,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'm³'
+		standard_name   = 'Accumulated daily discharge'
+    dif_disch      
+	Size: (911,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'm³'
+		standard_name   = 'Accumulated daily discharge difference between CHS and CARM '

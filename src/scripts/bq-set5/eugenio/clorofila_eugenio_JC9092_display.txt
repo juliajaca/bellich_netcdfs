@@ -1,0 +1,47 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'clorofila eugenio pçagina JC9092'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+	coordinates     = 'Station E1 --> Lat: XXXX, Lon: XXXXX 
+
+Station E2 --> Lat: xxxxx, Lon: -xxxxxxxx 
+
+Station E3 --> Lat: xxxxx, Lon:xxxxxxxxx 
+
+Station E4 --> Lat: xxxxx, Lon: -xxxxxxxx 
+'
+
+Dimensions:
+	time            = 120
+	unit_char_len   = 2
+	station         = 4
+
+Variables:
+    time           
+	Size: (120,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    station        
+	Size: (4, 2)
+	Dimensions: station, unit_char_len
+	Datatype: |S1
+	Attributes:
+		standard_name   = 'station'
+		_Encoding       = 'ascii'
+    clorofila      
+	Size: (120, 4)
+	Dimensions: time, station
+	Datatype: float64
+	Attributes:
+		standard_name   = 'clorofila'
+		unit            = 'XXXX'

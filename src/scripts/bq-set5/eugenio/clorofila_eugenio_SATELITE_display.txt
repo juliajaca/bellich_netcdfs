@@ -1,0 +1,31 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'clorofila eugenio pa  gina SATELITE'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon'
+	project         = 'XXXX'
+	source          = 'XXX'
+	conventions     = 'XXX'
+	coordinates     = 'Lat: XXXX, Lon: XXXXX'
+
+Dimensions:
+	time            = 156
+
+Variables:
+    time           
+	Size: (156,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		units           = 'days since 1970-01-01 00:00:0'
+		standard_name   = 'time'
+		calendar        = 'gregorian'
+    clorofila      
+	Size: (156,)
+	Dimensions: time
+	Datatype: float64
+	Attributes:
+		standard_name   = 'clorofila'
+		unit            = 'XXXX'

@@ -1,0 +1,31 @@
+Format:
+	NETCDF3_CLASSIC
+
+Global Attributes:
+	title           = 'Groundwater Discharge'
+	institution     = 'Instituto Español de Oceanografía (IEO), Spain'
+	domain          = 'Mar menor coastal lagoon, but Np1 is discharging not in the lagoon but in Salinas de San Pedro, in the north'
+	poject          = 'XXXX'
+	source          = 'Anexo 6. Resultado del modelo de flujo subterráneo para el año 2018/2019. Estudio para la cuantificaciónn de agua subterránea en el Mar Menor.'
+	Conventions     = 'CF-1.8'
+
+Dimensions:
+	sector          = 11
+	char_len        = 4
+
+Variables:
+    region         
+	Size: (11, 4)
+	Dimensions: sector, char_len
+	Datatype: |S1
+	Attributes:
+		long_name       = 'Lagoon sector'
+		_Encoding       = 'ascii'
+    water_discharge
+	Size: (11,)
+	Dimensions: sector
+	Datatype: float64
+	Attributes:
+		units           = 'm3 d-1'
+		standard_name   = 'water_volume_transport_in_river_channel'
+		long_name       = 'Daily water discharge per lagoon sector'
