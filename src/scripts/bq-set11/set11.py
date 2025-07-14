@@ -47,11 +47,11 @@ print(data)
 ////
 """
 # %% 
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set11/'
-ncfile = Dataset(f'{path}set11_clorofila.nc', mode='w', format='NETCDF3_CLASSIC')
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/BELICH_BIOGQ_V3/'
+ncfile = Dataset(f'{path}BELICH_BIOGQ_V3_CHL.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
-ncfile.title='set 11 clorofila'
+ncfile.title='BELICH_BIOGQ_V3_CHL'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXX'
@@ -73,17 +73,17 @@ date_var.bounds = "time_bnds"
 date_var.calendar = 'gregorian'
 date_var[:] = data['Días desde 1970'].values
 
-chl_var = ncfile.createVariable('chl', np.float64, ('time',))
+chl_var = ncfile.createVariable('chlorophyll', np.float64, ('time',))
 chl_var.units = 'ug L-1'
 chl_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
 chl_var.cell_methods = 'time: mean'
 chl_var[:] = data["Clorofila (microg L-1) Promedio mensual para toda la laguna"].values
 
-chl_sd_var = ncfile.createVariable('chl_sd', np.float64, ('time',))
-chl_sd_var.units = 'ug L-1'
-chl_sd_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
-chl_sd_var.cell_methods = 'time: standard_deviation'
-chl_sd_var[:] = data["Clorofila  (microg L-1)  SD"].values
+# chl_sd_var = ncfile.createVariable('chl_sd', np.float64, ('time',))
+# chl_sd_var.units = 'ug L-1'
+# chl_sd_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
+# chl_sd_var.cell_methods = 'time: standard_deviation'
+# chl_sd_var[:] = data["Clorofila  (microg L-1)  SD"].values
 
 time_bnds = ncfile.createVariable("time_bnds", np.float64, ("time", "nv"))
 time_bnds[:, 0] = start_days.values
@@ -91,7 +91,7 @@ time_bnds[:, 1] = end_days.values
 # %%
 ncfile.close()
 # %% COMPROBACION
-dataset = Dataset(f'{path}set11_clorofila.nc', "r")
+dataset = Dataset(f'{path}BELICH_BIOGQ_V3_CHL.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -107,8 +107,8 @@ for attr in dataset.ncattrs():
 # %%
 # Leer las variables
 tiempo = dataset.variables["time"][:]  # Días desde 1970
-chl = dataset.variables["chl"][:] 
-chl_sd = dataset.variables["chl_sd"][:] 
+chl = dataset.variables["chlorophyll"][:] 
+# chl_sd = dataset.variables["chl_sd"][:] 
 bounds = dataset.variables['time_bnds'][:,:] 
 
 
@@ -116,7 +116,7 @@ print(tiempo)
 print('-----------------')
 print(chl)
 print('-----------------')
-print(chl_sd)
+# print(chl_sd)
 print('-----------------')
 print(bounds)
 
@@ -135,11 +135,11 @@ plt.figure(figsize=(10, 5))
 plt.plot(fechas, chl, marker="o", linestyle="-", color="b", label="mean (microg/L)")
 plt.xlabel("Fecha"); plt.ylabel("mean chl (microg/L)"); plt.title("Serie Temporal de la clorofila"); plt.xticks(rotation=45); plt.legend(); plt.grid(); plt.show()
 # %%
-plt.figure(figsize=(10, 5))
-plt.plot(fechas, chl_sd, marker="o", linestyle="-", color="b", label="SD (microg/L)")
-plt.xlabel("Fecha");plt.ylabel("sd chl (microg/L)");plt.title("Serie Temporal del sd de la clorofila");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
+# plt.figure(figsize=(10, 5))
+# plt.plot(fechas, chl_sd, marker="o", linestyle="-", color="b", label="SD (microg/L)")
+# plt.xlabel("Fecha");plt.ylabel("sd chl (microg/L)");plt.title("Serie Temporal del sd de la clorofila");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
 # %%
-generar_txt(f'{path}set11_clorofila.nc', f'{path}set11_clorofila_display.txt')
+generar_txt(f'{path}BELICH_BIOGQ_V3_CHL.nc', f'{path}BELICH_BIOGQ_V3_CHL_display.txt')
 # %%
 """
   ****
@@ -152,10 +152,12 @@ generar_txt(f'{path}set11_clorofila.nc', f'{path}set11_clorofila_display.txt')
 //////
 """
 #  NITRATO
-ncfile = Dataset(f'{path}set11_nitrato.nc', mode='w', format='NETCDF3_CLASSIC')
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrate/BELICH_BIOGQ_V3/'
+
+ncfile = Dataset(f'{path}BELICH_BIOGQ_V3_NO3.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
-ncfile.title='set 11 nitrato'
+ncfile.title='BELICH_BIOGQ_V3_NO3'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXX'
@@ -183,11 +185,11 @@ nitrato_var.cell_methods = 'time: mean'
 nitrato_var.standard_name = 'mole_concentration_of_nitrate_in_sea_water'
 nitrato_var[:] = data["Nitrato (microM) Promedio"].values
 
-nitrato_sd_var = ncfile.createVariable('nitrate_sd', np.float64, ('time',))
-nitrato_sd_var.units = 'umol L-1'
-nitrato_sd_var.cell_methods = 'time: standard_deviation'
-nitrato_sd_var.standard_name = 'mole_concentration_of_nitrate_in_sea_water'
-nitrato_sd_var[:] = data["Nitrato (microM) SD"].values
+# nitrato_sd_var = ncfile.createVariable('nitrate_sd', np.float64, ('time',))
+# nitrato_sd_var.units = 'umol L-1'
+# nitrato_sd_var.cell_methods = 'time: standard_deviation'
+# nitrato_sd_var.standard_name = 'mole_concentration_of_nitrate_in_sea_water'
+# nitrato_sd_var[:] = data["Nitrato (microM) SD"].values
 
 time_bnds = ncfile.createVariable("time_bnds", np.float64, ("time", "nv"))
 time_bnds[:, 0] = start_days.values
@@ -195,7 +197,7 @@ time_bnds[:, 1] = end_days.values
 # %%
 ncfile.close()
 # %% COMPROBACION
-dataset = Dataset(f'{path}set11_nitrato.nc', "r")
+dataset = Dataset(f'{path}BELICH_BIOGQ_V3_NO3.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -212,14 +214,14 @@ for attr in dataset.ncattrs():
 # Leer las variables
 tiempo = dataset.variables["time"][:]  # Días desde 1970
 chl = dataset.variables["nitrate"][:] 
-chl_sd = dataset.variables["nitrate_sd"][:]    # 
+# chl_sd = dataset.variables["nitrate_sd"][:]    # 
 
 
 print(tiempo)
 print('-----------------')
 print(chl)
 print('-----------------')
-print(chl_sd)
+# print(chl_sd)
 
 # Convertir tiempo a formato datetime para mejor visualización
 fechas = pd.to_datetime(tiempo, origin="1970-01-01", unit="D")
@@ -230,16 +232,16 @@ dataset.close()
 orden = np.argsort(fechas)  # Obtiene los índices que ordenarían 'fechas'
 fechas_ordenadas = np.array(fechas)[orden]
 chl_ordenado = np.array(chl)[orden]
-chl_sd_ordenado = np.array(chl_sd)[orden]
+# chl_sd_ordenado = np.array(chl_sd)[orden]
 plt.figure(figsize=(10, 5))
 plt.plot(fechas_ordenadas, chl_ordenado, marker="o", linestyle="-", color="b", label="mean (microM/L)")
 plt.xlabel("Fecha"); plt.ylabel("mean nitrato (microM/L)"); plt.title("Serie Temporal del nitrato"); plt.xticks(rotation=45); plt.legend(); plt.grid(); plt.show()
 # %%
-plt.figure(figsize=(10, 5))
-plt.plot(fechas_ordenadas, chl_sd_ordenado, marker="o", linestyle="-", color="b", label="SD (microM/L)")
-plt.xlabel("Fecha");plt.ylabel("sd nitrato (microM/L)");plt.title("Serie Temporal del sd del nitrato");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
+# plt.figure(figsize=(10, 5))
+# plt.plot(fechas_ordenadas, chl_sd_ordenado, marker="o", linestyle="-", color="b", label="SD (microM/L)")
+# plt.xlabel("Fecha");plt.ylabel("sd nitrato (microM/L)");plt.title("Serie Temporal del sd del nitrato");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
 # %%
-generar_txt(f'{path}set11_nitrato.nc', f'{path}set11_nitrato_display.txt')
+generar_txt(f'{path}BELICH_BIOGQ_V3_NO3.nc', f'{path}BELICH_BIOGQ_V3_NO3_display.txt')
 # %%
 """
   ****
@@ -252,10 +254,12 @@ generar_txt(f'{path}set11_nitrato.nc', f'{path}set11_nitrato_display.txt')
  ////
 """
 # %% NITRITO
-ncfile = Dataset(f'{path}set11_nitrito.nc', mode='w', format='NETCDF3_CLASSIC')
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrite/BELICH_BIOGQ_V3/'
+
+ncfile = Dataset(f'{path}BELICH_BIOGQ_V3_NO2.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
-ncfile.title='set 11 nitrito'
+ncfile.title='BELICH_BIOGQ_V3_NO2'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXX'
@@ -283,11 +287,11 @@ nitrato_var.cell_methods = 'time: mean'
 nitrato_var.standard_name = 'mole_concentration_of_nitrite_in_sea_water'
 nitrato_var[:] = data["Nitrito (microM) Promedio"].values
 
-nitrato_sd_var = ncfile.createVariable('nitrite_sd', np.float64, ('time',))
-nitrato_sd_var.units = 'umol L-1'
-nitrato_sd_var.cell_methods = 'time: standard_deviation'
-nitrato_sd_var.standard_name = 'mole_concentration_of_nitrite_in_sea_water'
-nitrato_sd_var[:] = data["Nitrito (microM) SD"].values
+# nitrato_sd_var = ncfile.createVariable('nitrite_sd', np.float64, ('time',))
+# nitrato_sd_var.units = 'umol L-1'
+# nitrato_sd_var.cell_methods = 'time: standard_deviation'
+# nitrato_sd_var.standard_name = 'mole_concentration_of_nitrite_in_sea_water'
+# nitrato_sd_var[:] = data["Nitrito (microM) SD"].values
 
 time_bnds = ncfile.createVariable("time_bnds", np.float64, ("time", "nv"))
 time_bnds[:, 0] = start_days.values
@@ -295,7 +299,7 @@ time_bnds[:, 1] = end_days.values
 # %%
 ncfile.close()
 # %% COMPROBACION
-dataset = Dataset(f'{path}set11_nitrito.nc', "r")
+dataset = Dataset(f'{path}BELICH_BIOGQ_V3_NO2.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -312,14 +316,14 @@ for attr in dataset.ncattrs():
 # Leer las variables
 tiempo = dataset.variables["time"][:]  # Días desde 1970
 chl = dataset.variables["nitrite"][:] 
-chl_sd = dataset.variables["nitrite_sd"][:]    # 
+# chl_sd = dataset.variables["nitrite_sd"][:]    # 
 
 
 print(tiempo)
 print('-----------------')
 print(chl)
 print('-----------------')
-print(chl_sd)
+# print(chl_sd)
 
 # Convertir tiempo a formato datetime para mejor visualización
 fechas = pd.to_datetime(tiempo, origin="1970-01-01", unit="D")
@@ -330,16 +334,16 @@ dataset.close()
 orden = np.argsort(fechas)  # Obtiene los índices que ordenarían 'fechas'
 fechas_ordenadas = np.array(fechas)[orden]
 chl_ordenado = np.array(chl)[orden]
-chl_sd_ordenado = np.array(chl_sd)[orden]
+# chl_sd_ordenado = np.array(chl_sd)[orden]
 plt.figure(figsize=(10, 5))
 plt.plot(fechas_ordenadas, chl_ordenado, marker="o", linestyle="-", color="b", label="mean (microM/L)")
 plt.xlabel("Fecha"); plt.ylabel("mean nitrito (microM/L)"); plt.title("Serie Temporal del nitrito"); plt.xticks(rotation=45); plt.legend(); plt.grid(); plt.show()
 # %%
-plt.figure(figsize=(10, 5))
-plt.plot(fechas_ordenadas, chl_sd_ordenado, marker="o", linestyle="-", color="b", label="SD (microM/L)")
-plt.xlabel("Fecha");plt.ylabel("sd nitrito (microM/L)");plt.title("Serie Temporal del sd del nitrito");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
+# plt.figure(figsize=(10, 5))
+# plt.plot(fechas_ordenadas, chl_sd_ordenado, marker="o", linestyle="-", color="b", label="SD (microM/L)")
+# plt.xlabel("Fecha");plt.ylabel("sd nitrito (microM/L)");plt.title("Serie Temporal del sd del nitrito");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
 # %%
-generar_txt(f'{path}set11_nitrito.nc', f'{path}set11_nitrito_display.txt')
+generar_txt(f'{path}BELICH_BIOGQ_V3_NO2.nc', f'{path}BELICH_BIOGQ_V3_NO2_display.txt')
 # %%
 """
     **
@@ -352,10 +356,12 @@ generar_txt(f'{path}set11_nitrito.nc', f'{path}set11_nitrito_display.txt')
     /
 """
 # %% FOSFATO
-ncfile = Dataset(f'{path}set11_fosfato.nc', mode='w', format='NETCDF3_CLASSIC')
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/phosphate/BELICH_BIOGQ_V3/'
+
+ncfile = Dataset(f'{path}BELICH_BIOGQ_V3_PO4.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
-ncfile.title='set 11 fosfato'
+ncfile.title='BELICH_BIOGQ_V3_PO4'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXX'
@@ -382,11 +388,11 @@ nitrato_var.cell_methods = 'time: mean'
 nitrato_var.standard_name = 'mole_concentration_of_phosphate_in_sea_water'
 nitrato_var[:] = data["Fosfato (microM) Promedio"].values
 
-nitrato_sd_var = ncfile.createVariable('phosphate_sd', np.float64, ('time',))
-nitrato_sd_var.units = 'umol L-1'
-nitrato_sd_var.cell_methods = 'time: standard_deviation'
-nitrato_sd_var.standard_name = 'mole_concentration_of_phosphate_in_sea_water'
-nitrato_sd_var[:] = data["Fosfato (microM) SD"].values
+# nitrato_sd_var = ncfile.createVariable('phosphate_sd', np.float64, ('time',))
+# nitrato_sd_var.units = 'umol L-1'
+# nitrato_sd_var.cell_methods = 'time: standard_deviation'
+# nitrato_sd_var.standard_name = 'mole_concentration_of_phosphate_in_sea_water'
+# nitrato_sd_var[:] = data["Fosfato (microM) SD"].values
 
 time_bnds = ncfile.createVariable("time_bnds", np.float64, ("time", "nv"))
 time_bnds[:, 0] = start_days.values
@@ -394,7 +400,7 @@ time_bnds[:, 1] = end_days.values
 # %%
 ncfile.close()
 # %% COMPROBACION
-dataset = Dataset(f'{path}set11_fosfato.nc', "r")
+dataset = Dataset(f'{path}BELICH_BIOGQ_V3_PO4.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -411,14 +417,14 @@ for attr in dataset.ncattrs():
 # Leer las variables
 tiempo = dataset.variables["time"][:]  # Días desde 1970
 chl = dataset.variables["phosphate"][:] 
-chl_sd = dataset.variables["phosphate_sd"][:]    # 
+# chl_sd = dataset.variables["phosphate_sd"][:]    # 
 
 
 print(tiempo)
 print('-----------------')
 print(chl)
 print('-----------------')
-print(chl_sd)
+# print(chl_sd)
 
 # Convertir tiempo a formato datetime para mejor visualización
 fechas = pd.to_datetime(tiempo, origin="1970-01-01", unit="D")
@@ -429,14 +435,14 @@ dataset.close()
 orden = np.argsort(fechas)  # Obtiene los índices que ordenarían 'fechas'
 fechas_ordenadas = np.array(fechas)[orden]
 chl_ordenado = np.array(chl)[orden]
-chl_sd_ordenado = np.array(chl_sd)[orden]
+# chl_sd_ordenado = np.array(chl_sd)[orden]
 plt.figure(figsize=(10, 5))
 plt.plot(fechas_ordenadas, chl_ordenado, marker="o", linestyle="-", color="b", label="mean (microM/L)")
 plt.xlabel("Fecha"); plt.ylabel("mean fosfato (microM/L)"); plt.title("Serie Temporal del fosfato"); plt.xticks(rotation=45); plt.legend(); plt.grid(); plt.show()
 # %%
-plt.figure(figsize=(10, 5))
-plt.plot(fechas_ordenadas, chl_sd_ordenado, marker="o", linestyle="-", color="b", label="SD (microM/L)")
-plt.xlabel("Fecha");plt.ylabel("sd fosfato (microM/L)");plt.title("Serie Temporal del sd del fosfato");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
+# plt.figure(figsize=(10, 5))
+# plt.plot(fechas_ordenadas, chl_sd_ordenado, marker="o", linestyle="-", color="b", label="SD (microM/L)")
+# plt.xlabel("Fecha");plt.ylabel("sd fosfato (microM/L)");plt.title("Serie Temporal del sd del fosfato");plt.xticks(rotation=45);plt.legend();plt.grid();plt.show()
 # %%
-generar_txt(f'{path}set11_fosfato.nc', f'{path}set11_fosfato_display.txt')
+generar_txt(f'{path}BELICH_BIOGQ_V3_PO4.nc', f'{path}BELICH_BIOGQ_V3_PO4_display.txt')
 # %%

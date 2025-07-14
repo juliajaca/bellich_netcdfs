@@ -17,8 +17,8 @@ epoch = pd.Timestamp('1970-01-01')
 dias_desde_1970 = (data.Date_time - epoch) / pd.Timedelta(days=1)
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/AportesContinentales/set3_runoff/'
-ncfile = Dataset(f'{path}albujon_flow_hourly.nc', mode='w', format='NETCDF3_CLASSIC')
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/AportesContinentales/CHS_ALBUJON_V2/'
+ncfile = Dataset(f'{path}CHS_ALBUJON_V2.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 # Crear dimensiones
 datetime_dim = ncfile.createDimension('time', len(data))
@@ -51,7 +51,7 @@ ncfile.close()
 
 # %%
 #  COMPROBACION
-dataset = Dataset(f'{path}albujon_flow_hourly.nc', "r")
+dataset = Dataset(f'{path}CHS_ALBUJON_V2.nc', "r")
 print(dataset)
 print(dataset.variables.keys())  # Ver las variables en el archivo
 print('los fechas data son')
@@ -94,8 +94,8 @@ plt.grid()
 plt.show()
 # %%
 # GENERAR TXT
-ncfile = Dataset(f'{path}albujon_flow_hourly.nc', "r")
-txt_filename = f"{path}albujon_flow_hourly_output.txt"
+ncfile = Dataset(f'{path}CHS_ALBUJON_V2.nc', "r")
+txt_filename = f"{path}CHS_ALBUJON_V2.txt"
 
 with open(txt_filename, "w") as f:
     # Escribir el formato

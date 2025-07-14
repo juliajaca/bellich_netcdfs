@@ -50,7 +50,6 @@ flow_var.standard_name = "water_volume_transport_in_river_channel"
 flow_var.long_name = "Mean river discharge"
 flow_var[:] = data["Flow_mean"].values
 
-
 lat_var = ncfile.createVariable('latitude', np.float64, )
 lat_var.units = 'degrees_north'
 lat_var.standard_name = "latitude"
@@ -70,7 +69,6 @@ crs.epsg_code = "EPSG:4326"
 ncfile.close()
 
 # %%
-
 txt_filename = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/AportesContinentales/CHS_ALBUJON_v1/CHS_ALBUJON_V1_Q_MEAN_DAILY.txt'
 ncfile = Dataset(path, "r")
 

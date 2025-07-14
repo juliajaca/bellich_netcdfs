@@ -25,13 +25,14 @@ dias_desde_1970 = (data.Date - epoch) / pd.Timedelta(days=1)
  ***  /**/**  //** /***   //********  //** //******
 ///   // //    //  ///     ////////    //   //////
 """
-path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/nitrato/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrate/set3-julia'
-ncfile = Dataset(f'{path}nutrientes_3_estaciones_NITRATO.nc', mode='w', format='NETCDF3_CLASSIC')
+# path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/nitrato/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrate/BELICH_NUT'
+ncfile = Dataset(f'{path}BELICH_NUT_NO3.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
+# C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Biogeochemical\nutrients\nitrate\BELICH_NUT
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='nutrientes tres estaciones--NITRATO'
+ncfile.title='BELICH_NUT_NO3'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
@@ -131,7 +132,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}nutrientes_3_estaciones_NITRATO.nc', f'{path}nutrientes_3_estaciones_NITRATO_display.txt')
+generar_txt(f'{path}BELICH_NUT_NO3.nc', f'{path}BELICH_NUT_NO3_display.txt')
 
 """
 .##....##.####.########.########..####.########..#######.
@@ -143,14 +144,15 @@ generar_txt(f'{path}nutrientes_3_estaciones_NITRATO.nc', f'{path}nutrientes_3_es
 .##....##.####....##....##.....##.####....##.....#######.
 """
 # %%
-path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/nitrito/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrite/set3-julia'
+# path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/nitrito/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrite/BELICH_NUT'
 
-ncfile = Dataset(f'{path}nutrientes_3_estaciones_NITRITO.nc', mode='w', format='NETCDF3_CLASSIC')
+
+ncfile = Dataset(f'{path}BELICH_NUT_NO2.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='nutrientes tres estaciones--NITRITO'
+ncfile.title='BELICH_NUT_NO2'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
@@ -202,7 +204,7 @@ crs.epsg_code = "EPSG:4326"
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}nutrientes_3_estaciones_NITRITO.nc', "r")
+dataset = Dataset(f'{path}BELICH_NUT_NO2.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -248,7 +250,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}nutrientes_3_estaciones_NITRITO.nc', f'{path}nutrientes_3_estaciones_NITRITO_display.txt')
+generar_txt(f'{path}BELICH_NUT_NO2.nc', f'{path}BELICH_NUT_NO2_display.txt')
 
 # %%
 """
@@ -262,13 +264,13 @@ generar_txt(f'{path}nutrientes_3_estaciones_NITRITO.nc', f'{path}nutrientes_3_es
 //         ///////   ////////  //       //      //     //       ///////
 """
 # %%
-path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/fosfato/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/phosphate/set3-julia'
-ncfile = Dataset(f'{path}nutrientes_3_estaciones_FOSFATO.nc', mode='w', format='NETCDF3_CLASSIC')
+# path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/fosfato/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/phosphate/BELICH_NUT'
+ncfile = Dataset(f'{path}BELICH_NUT_PO4.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='nutrientes tres estaciones--FOSFATO'
+ncfile.title='BELICH_NUT_PO4'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
@@ -283,8 +285,6 @@ for dim in ncfile.dimensions.items():
     print(dim)
 
 # %%
-
-
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
 time_var.standard_name = "time"
@@ -319,7 +319,7 @@ crs.epsg_code = "EPSG:4326"
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}nutrientes_3_estaciones_FOSFATO.nc', "r")
+dataset = Dataset(f'{path}BELICH_NUT_PO4.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -365,7 +365,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}nutrientes_3_estaciones_FOSFATO.nc', f'{path}nutrientes_3_estaciones_FOSFATO_display.txt')
+generar_txt(f'{path}BELICH_NUT_PO4.nc', f'{path}BELICH_NUT_PO4_display.txt')
 # %%
 """
   ******** ** **       **   ******      **     **********   *******
@@ -378,13 +378,13 @@ generar_txt(f'{path}nutrientes_3_estaciones_FOSFATO.nc', f'{path}nutrientes_3_es
 ////////  // //////// //   //////  //      //     //       ///////
 """
 # %%
-path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/silicato/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/silicate/set3-julia'
-ncfile = Dataset(f'{path}nutrientes_3_estaciones_SILICATO.nc', mode='w', format='NETCDF3_CLASSIC')
+# path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/silicato/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/silicate/SiO4'
+ncfile = Dataset(f'{path}BELICH_NUT_SiO4.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='nutrientes tres estaciones--SILICATO'
+ncfile.title='BELICH_NUT_SiO4'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
@@ -398,9 +398,6 @@ for dim in ncfile.dimensions.items():
     print(dim)
 
 # %%
-
-
-
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
 time_var.standard_name = "time"
@@ -428,14 +425,14 @@ lon_var.standard_name = "longitude"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
 crs = ncfile.createVariable("crs", "i")
-crs.long_name=  "Reference coordinate system"
+crs.long_name = "Reference coordinate system"
 crs.grid_mapping_name = "latitude_longitude"
 crs.epsg_code = "EPSG:4326"
 # %%
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}nutrientes_3_estaciones_SILICATO.nc', "r")
+dataset = Dataset(f'{path}BELICH_NUT_SiO4.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -471,7 +468,7 @@ fig, axes = plt.subplots(nrows=3, figsize=(10, 10), sharex=True)
 
 for i in range(3):
     axes[i].plot(fechas_ordenadas, silicato_ordenado[:, i], marker='o', label=estaciones[i])
-    axes[i].set_ylabel('Silicato ')
+    axes[i].set_ylabel('Silicato')
     axes[i].set_title(f'Serie temporal SILICATO- {estaciones[i]}')
     axes[i].grid(True)
     axes[i].legend()
@@ -481,7 +478,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}nutrientes_3_estaciones_SILICATO.nc', f'{path}nutrientes_3_estaciones_SILICATO_display.txt')
+generar_txt(f'{path}BELICH_NUT_SiO4.nc', f'{path}BELICH_NUT_SiO4_display.txt')
 # %%
 """
      **     ****     ****   *******   ****     ** **   *******
@@ -493,13 +490,13 @@ generar_txt(f'{path}nutrientes_3_estaciones_SILICATO.nc', f'{path}nutrientes_3_e
 /**     /**/**        /** //*******  /**    //***/** //*******
 //      // //         //   ///////   //      /// //   ///////
 """
-path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/amonio/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/ammonium/set3-julia'
-ncfile = Dataset(f'{path}nutrientes_3_estaciones_AMONIO.nc', mode='w', format='NETCDF3_CLASSIC')
+# path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/amonio/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/ammonium/NH4'
+ncfile = Dataset(f'{path}BELICH_NUT_NH4.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='nutrientes tres estaciones--AMONIO'
+ncfile.title='BELICH_NUT_NH4'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
@@ -548,7 +545,7 @@ crs.epsg_code = "EPSG:4326"
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}nutrientes_3_estaciones_AMONIO.nc', "r")
+dataset = Dataset(f'{path}BELICH_NUT_NH4.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -594,7 +591,7 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}nutrientes_3_estaciones_AMONIO.nc', f'{path}nutrientes_3_estaciones_AMONIO_display.txt')
+generar_txt(f'{path}BELICH_NUT_NH4.nc', f'{path}BELICH_NUT_NH4_display.txt')
 
 # %% 
 """
@@ -608,13 +605,13 @@ generar_txt(f'{path}nutrientes_3_estaciones_AMONIO.nc', f'{path}nutrientes_3_est
 ///////   // //      ///
 """
 # %%
-path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/din/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/din/set3-julia'
-ncfile = Dataset(f'{path}nutrientes_3_estaciones_DIN.nc', mode='w', format='NETCDF3_CLASSIC')
+# path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/din/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/din/BELICH_NUT_DIN'
+ncfile = Dataset(f'{path}BELICH_NUT_DIN.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='nutrientes tres estaciones--DIN'
+ncfile.title='BELICH_NUT_DIN'
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon'
 ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
@@ -629,8 +626,6 @@ for dim in ncfile.dimensions.items():
     print(dim)
 
 # %%
-
-
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
 time_var.standard_name = "time"
@@ -641,7 +636,6 @@ parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_ch
 parameter_var.long_name = 'station'
 parameter_var._Encoding = 'ascii'
 parameter_var[:,:] = stringtochar(estaciones_np)
-
 
 # %%
 value_var = ncfile.createVariable('din', np.float64, ('time','station'))
@@ -668,7 +662,7 @@ crs.epsg_code = "EPSG:4326"
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}nutrientes_3_estaciones_DIN.nc', "r")
+dataset = Dataset(f'{path}BELICH_NUT_DIN.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -704,7 +698,7 @@ fig, axes = plt.subplots(nrows=3, figsize=(10, 10), sharex=True)
 
 for i in range(3):
     axes[i].plot(fechas_ordenadas,din_ordenado[:, i], marker='o', label=estaciones[i])
-    axes[i].set_ylabel('din ')
+    axes[i].set_ylabel('din')
     axes[i].set_title(f'Serie temporal DIN- {estaciones[i]}')
     axes[i].grid(True)
     axes[i].legend()
@@ -714,5 +708,5 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}nutrientes_3_estaciones_DIN.nc', f'{path}nutrientes_3_estaciones_DIN_display.txt')
+generar_txt(f'{path}BELICH_NUT_DIN.nc', f'{path}BELICH_NUT_DIN.txt')
 # %%

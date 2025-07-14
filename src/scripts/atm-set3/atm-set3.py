@@ -13,7 +13,9 @@ columnas_que_quiero =cols[list(range(1, 4)) + list(range(17, len(cols)))]
 dtypes_dict = {col: "int" if col in ['AÑO','MES', 'DIA'] else 'float64' 
                for col in columnas_que_quiero}
 # %%
-nombre_fichero = 'radiacion_1996_2002'
+# nombre_fichero = 'radiacion_1996_2002'
+nombre_fichero = 'AEMET_SRAD'
+
 data0 = pd.read_excel(
     'C:/Users/Julia/Documents/VSCODE_BELLICH/src/datos/atmosferico/set3/Radiacion 1996_2022.xlsx',
     dtype= dtypes_dict,
@@ -32,7 +34,9 @@ epoch = pd.Timestamp('1970-01-01')
 dias_desde_1970 = (data.Fecha - epoch) / pd.Timedelta(days=1)
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/solarRadiation/set3-julia/'
+# path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/solarRadiation/set3-julia/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/solarRadiation/AEMET/'
+
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 
 ncfile.title=f'{nombre_fichero}'

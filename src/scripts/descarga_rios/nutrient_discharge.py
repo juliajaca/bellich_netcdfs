@@ -295,7 +295,7 @@ time_var.calendar = 'gregorian'
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
 
 
-fosfate_var = ncfile.createVariable('fosfate', np.float64, ('time',))
+fosfate_var = ncfile.createVariable('phosphate', np.float64, ('time',))
 fosfate_var.long_name = 'mass concentration of phosphate in sea water'
 fosfate_var.units= 'mg L-1'
 fosfate_var[:] = valor_array[:,2]
