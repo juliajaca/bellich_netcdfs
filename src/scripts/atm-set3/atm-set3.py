@@ -3,6 +3,7 @@ from netCDF4 import Dataset, stringtochar
 import numpy as np
 import math
 import pandas as pd
+import shutil
 import matplotlib.pyplot as plt
 import sys
 sys.path.append("../")
@@ -13,8 +14,6 @@ columnas_que_quiero =cols[list(range(1, 4)) + list(range(17, len(cols)))]
 dtypes_dict = {col: "int" if col in ['AÑO','MES', 'DIA'] else 'float64' 
                for col in columnas_que_quiero}
 # %%
-# nombre_fichero = 'radiacion_1996_2002'
-nombre_fichero = 'AEMET_SRAD'
 
 data0 = pd.read_excel(
     'C:/Users/Julia/Documents/VSCODE_BELLICH/src/datos/atmosferico/set3/Radiacion 1996_2022.xlsx',
@@ -34,15 +33,26 @@ epoch = pd.Timestamp('1970-01-01')
 dias_desde_1970 = (data.Fecha - epoch) / pd.Timedelta(days=1)
 
 # %%
-# path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/solarRadiation/set3-julia/'
+variables_rad = {
+    'RDIRDIA': ['Daily direct solar radiation','W m-2'],
+    'RDIFDIA': ['Daily diffuse solar radiation', 'W m-2'],
+    'RGLODIA': ['Radiación Global Diaria', 'W m-2'],
+    'PTJERGL': ['Percentage of global radiation relative to extraterrestrial radiation', '%'],
+    'PTJERGF': ['Percentage of diffuse radiation relative to global radiation', '%']
+}
+transformables = list(variables_rad.keys())[0:3]
+nombre_fichero = 'AEMET_SRAD'
 path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/solarRadiation/AEMET/'
 
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 
-ncfile.title=f'{nombre_fichero}'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'AEMET'
+ncfile.project = 'Not associated with a specific project'
+ncfile.source = 'In situ data collection'
+ncfile.Conventions = 'CF-1.8'
 ncfile.indicativo = '7178I'
 ncfile.altitud = '61'
 ncfile.ind_syn = '8430'
@@ -57,16 +67,9 @@ for dim in ncfile.dimensions.items():
 
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
-
-for column in data[estaciones]:
-    print(column)
-    value_var = ncfile.createVariable(column, np.float64, ('time',))
-    value_var.long_name = column
-    value_var.units= 'XXXX'
-    value_var[:] = data[estaciones][column]
 
 lat_var = ncfile.createVariable('northing', np.float64, )
 lat_var.units = 'm'
@@ -80,11 +83,33 @@ lon_var.long_name = 'UTM easting'
 lon_var.grid_mapping = "crs"
 lon_var[:] =  660598
 
+for column in data[estaciones]:
+    if column in variables_rad.keys():
+        print(column)
+        value_var = ncfile.createVariable(column, np.float64, ('time',))
+        value_var.units= variables_rad[column][1]
+        value_var.long_name = variables_rad[column][0]
+        value_var.cell_methods = 'time: mean'
+        valores_con_nan = data[estaciones][column]
+        valores_con_nan[np.isnan(valores_con_nan)] = -9999
+        value_var.cell_methods= 'time: mean (interval: 1 day)'
+        value_var.missing_value = -9999
+        value_var.grid_mapping = "crs"
+        value_var.comment = 'Not an official CF standard_name'
+
+        if column in transformables: ## # Si están en kJ/m²/día W_m2 = (valores_kJ_m2_dia * 1000) / 86400
+            valores_con_nan = (valores_con_nan * 1000) / 86400
+        value_var[:] = valores_con_nan
+
+
+
 crs = ncfile.createVariable('crs', 'i')
 crs.grid_mapping_name = "transverse_mercator"
 crs.projection = "UTM"
 crs.long_name = "ETRS89 / UTM zone 30N"
 crs.epsg_code = "EPSG:25830"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257222101
 
 ncfile.close()
 
@@ -102,10 +127,16 @@ print("\n🔹 Atributos Globales:")
 for attr in dataset.ncattrs():
     print(f"{attr}: {dataset.getncattr(attr)}")
 
+keys = list(variables_rad.keys())
+
+unit = dataset.variables[keys[0]][:]
+unit2 = dataset.variables[keys[1]][:]
+unit3 = dataset.variables[keys[2]][:]
+
 tiempo = dataset.variables["time"][:]  # Días desde 1970
-unit = dataset.variables["RDIR05"][:]    #  
-unit2 = dataset.variables["RDIF06"][:]    #  
-unit3 = dataset.variables['PTJERGL'][:] 
+unit = dataset.variables[keys[0]][:]
+unit2 = dataset.variables[keys[1]][:]
+unit3 = dataset.variables[keys[2]][:]
 northing = dataset.variables['northing'][:]
 easting = dataset.variables['easting'][:]
 crs = dataset.variables['crs']
@@ -173,4 +204,9 @@ dataset.close()
 #     plt.close()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Atmospheric/solarRadiation/AEMET/'
+
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
+
 # %%

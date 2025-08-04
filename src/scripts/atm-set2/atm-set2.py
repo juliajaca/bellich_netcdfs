@@ -2,12 +2,12 @@
 from netCDF4 import Dataset, stringtochar
 import numpy as np
 import pandas as pd
+import shutil
 import matplotlib.pyplot as plt
 import sys
 sys.path.append("../")
 from generar_txt import generar_txt
 # %%
-nombre_fichero = 'IEO_PRMAX'
 data0 = pd.read_excel(
     'C:/Users/Julia/Documents/VSCODE_BELLICH/src/datos/atmosferico/set2/Precipitaciones_p99_max per year.xlsx',
     dtype={'E7020': 'float', 'E7025': 'float', 'E7026': 'float', 'E7029': 'float', 'Year': 'int'},
@@ -28,13 +28,18 @@ estaciones_np = np.array(estaciones, dtype=f'S{max(len(s) for s in estaciones)}'
 max_length_param = max(len(s) for s in estaciones)
 
 # %%
+nombre_fichero = 'IEO_PRMAX'
+
 path= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/precipitation/IEO_PR/'
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 
-ncfile.title=f'{nombre_fichero}'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'IEO_PR'
+ncfile.project = 'Not associated with a specific project'
+ncfile.source = 'In situ data collection'
+ncfile.Conventions = 'CF-1.8'
 
 ncfile.createDimension('time', len( data.Year.drop_duplicates() ))
 ncfile.createDimension('unit_char_len', max_length_param)
@@ -45,20 +50,25 @@ for dim in ncfile.dimensions.items():
 
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
+
+valores_con_nan = data[estaciones].to_numpy() # o tambien data[estaciones].values
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+
+value_var = ncfile.createVariable('precipitation', np.float64, ('time', 'station'))
+value_var.units= 'mm'
+value_var.standard_name = 'lwe_thickness_of_precipitation_amount'
+value_var.long_name = 'Annual maximum precipitation (liquid water equivalent)'
+value_var.cell_methods= 'time: maximum'
+value_var.missing_value = -9999
+value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_code', 'S1', ('station', 'unit_char_len'))
 parameter_var.long_name = 'station'
 parameter_var._Encoding = 'ascii'
 parameter_var[:,:] = stringtochar(estaciones_np)
-
-value_var = ncfile.createVariable('precipitation', np.float64, ('time', 'station'))
-value_var.standard_name = 'precipitation_flux'
-value_var.units= 'XXX'
-value_var[:, :] =  data[estaciones].to_numpy()   # o tambien data[estaciones].values
-
 ncfile.close()
 
 # %% COMPROBACION
@@ -118,4 +128,7 @@ plt.show()
 
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Atmospheric/precipitation/IEO_PR/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%

@@ -1,6 +1,7 @@
 # %%
 from netCDF4 import Dataset, stringtochar
 import numpy as np
+import shutil
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -16,16 +17,12 @@ data = pd.concat([estA, estB], ignore_index=True)
 # orden_deseado = data["Codest"].unique()
 # %%
 
-
-# %%
-
 data = data.sort_values(by=["Fecha", "Hora"]).reset_index(drop=True)
 
 data['FechaJunta'] = pd.to_datetime(data['Fecha'].astype(str) + ' ' + data['Hora'].astype(str), dayfirst=True,)
 epoch = pd.Timestamp('1970-01-01')
 n_dias_desde_1970 = data.FechaJunta.drop_duplicates() 
 
-# %%
 
 # %%
 estaciones = data['Codest'].unique()
@@ -37,13 +34,24 @@ coordenadas['Estacion'] = pd.Categorical(coordenadas['Estacion'], categories=est
 coordenadas = coordenadas.sort_values('Estacion').reset_index(drop=True)
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/precipitation/set1-julia/'
+nombre_fichero = 'SIAM_PR_MEAN_HOURLY'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Atmospheric/precipitation/SIAM/'
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 
-ncfile.title=f'{nombre_fichero}'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'SIAM'
+ncfile.project = 'Not associated with a specific project'
+ncfile.source = 'In situ data collection'
+ncfile.Conventions = 'CF-1.8'
+
+'''
+SIAM Servicio agrometeorológico de Murcia en la cuenca vertiente del Mar Menor, 12 stations, hourly sampling. (dataset: Precip_SIAM_16_24_Mma.xls, Precip_SIAM_16_24_Mmb.xls,  Estac_coord.xls, responsible: Gonzalo González Barberá, period covered: 1/01/2016 to 30/11/2024 pero varia con la estacion, path: Datos_MM_Art_2025\Atmosfericas\GGB, variables measured: hourly precipitation).
+
+dataset_id = SIAM
+project = Not associated with a specific project
+'''
 
 ncfile.createDimension('time', len(n_dias_desde_1970))
 ncfile.createDimension('unit_char_len', max_length_param)
@@ -58,28 +66,13 @@ for dim in ncfile.dimensions.items():
 pivot = data.pivot_table(index='FechaJunta', columns='Codest', values='Prec')
 valor_array = pivot.to_numpy()
 
-value_var = ncfile.createVariable('precipitation', np.float64, ('time', 'station'))
-value_var.standard_name = 'precipitation_flux'
-value_var.units= 'XXXX'
-value_var[:,:] = valor_array
-
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 dias_desde_1970 = pd.Series(pivot.index)
 dias_desde_1970 = (dias_desde_1970 - epoch) / pd.Timedelta(days=1)
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
-
-parameter_var = ncfile.createVariable('station_code', 'S1', ('station', 'unit_char_len'))
-parameter_var.long_name = 'station code'
-parameter_var._Encoding = 'ascii'
-parameter_var[:,:] = stringtochar(estaciones_np)
-
-nombre_var = ncfile.createVariable('station_name', 'S1', ('station', 'name_full_strlen'))
-nombre_var.long_name = 'station name and location'
-nombre_var._Encoding = 'ascii'
-nombre_var[:] = stringtochar(np.array(nombres_completos, dtype=f'S{max_len_nombre}'))
 
 # Latitud y longitud
 lat_var = ncfile.createVariable('station_northing', np.float64, ('station',))
@@ -94,12 +87,35 @@ lon_var.long_name = 'UTM easting'
 lon_var.grid_mapping = "crs"
 lon_var[:] =  [coordenadas.iloc[i].UTM_X for i in range(len(coordenadas))]
 
+valores_con_nan = valor_array
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+value_var = ncfile.createVariable('precipitation', np.float64, ('time', 'station'))
+value_var.units= 'mm'
+value_var.standard_name = 'lwe_thickness_of_precipitation_amount'
+value_var.long_name = 'Annual maximum precipitation (liquid water equivalent)'
+value_var.cell_methods= 'time: mean'
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var[:,:] = valores_con_nan
+
+parameter_var = ncfile.createVariable('station_code', 'S1', ('station', 'unit_char_len'))
+parameter_var.long_name = 'station code'
+parameter_var._Encoding = 'ascii'
+parameter_var[:,:] = stringtochar(estaciones_np)
+
+nombre_var = ncfile.createVariable('station_name', 'S1', ('station', 'name_full_strlen'))
+nombre_var.long_name = 'station name and location'
+nombre_var._Encoding = 'ascii'
+nombre_var[:] = stringtochar(np.array(nombres_completos, dtype=f'S{max_len_nombre}'))
+
 crs = ncfile.createVariable('crs', 'i')
 crs.grid_mapping_name = "transverse_mercator"
 crs.projection = "UTM"
 crs.long_name = "ETRS89 / UTM zone 30N"
 crs.epsg_code = "EPSG:25830"
-crs.comment = "Las coordenadas UTM podrían estar referidas a ED50 o ETRS89; se ha asumido ETRS89 (EPSG:25830) por defecto"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257222101
+crs.comment = "The UTM coordinates might refer to either ED50 or ETRS89; ETRS89 (EPSG:25830) has been assumed by default"
 
 ncfile.close()
 
@@ -162,4 +178,7 @@ plt.show()
 
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Atmospheric/precipitation/SIAM/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%

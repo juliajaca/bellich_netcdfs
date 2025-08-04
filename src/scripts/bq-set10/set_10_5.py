@@ -75,7 +75,7 @@ def hacer_plot(df_clorofila_mascarada):
     # plt.axis('equal')
     # plt.show()
     timestamp = fecha.strftime('%Y%m%d')
-    # plt.savefig(f'sentinel_3_clorofila_bela_{timestamp}.pdf', format='pdf')
+    plt.savefig(f'2_sentinel_3_clorofila_bela_{timestamp}.pdf', format='pdf')
     plt.show()
 
 def hacer_5_plots(df1, df2,df3,df4,df5):
@@ -240,6 +240,9 @@ for fecha in data.fecha.unique()[0:]:
 
         # Construir nuevo DataFrame con los NaNs incluidos
         df_completo = pd.DataFrame({'latitud': lat_nueva,'longitud': lon_nueva,'clorofila': chl_nueva})
+
+        df_completo.loc[df_completo["clorofila"] > 1e5, "clorofila"] = np.nan
+
         # print(df_completo.head(5))  # vista previa
         # hacer_plot_nan(df_completo)
 
@@ -327,5 +330,5 @@ for fecha in data.fecha.unique()[0:]:
             df_final = pd.concat([df_final, df_clorofila_mascarada_tree], ignore_index=True)
     
 # %%
-# df_final.to_csv('datos_satelite_limpios_2.csv', index=False)
+df_final.to_csv('datos_satelite_limpios_sin10000.csv', index=False)
 # %%

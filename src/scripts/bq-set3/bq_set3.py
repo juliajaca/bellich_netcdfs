@@ -1,6 +1,7 @@
 # %%
 from netCDF4 import Dataset, date2num,num2date, stringtochar
 import numpy as np
+import shutil
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -10,7 +11,7 @@ from generar_txt import generar_txt
 data  = pd.read_excel('C:/Users/Julia/Documents/VSCODE_BELLICH/src/datos/bq/set3/Nutrient_Belich_2021.xlsx', parse_dates= ['Date'],sheet_name="data")
 data = data.sort_values(by='Date').reset_index(drop=True)
 print(data.head())
-
+data = data.replace(-1, np.nan)
 # %%
 epoch = pd.Timestamp('1970-01-01')
 dias_desde_1970 = (data.Date - epoch) / pd.Timedelta(days=1)
@@ -25,18 +26,21 @@ dias_desde_1970 = (data.Date - epoch) / pd.Timedelta(days=1)
  ***  /**/**  //** /***   //********  //** //******
 ///   // //    //  ///     ////////    //   //////
 """
-# path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/nitrato/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrate/BELICH_NUT'
-ncfile = Dataset(f'{path}BELICH_NUT_NO3.nc', mode='w', format='NETCDF3_CLASSIC')
+
+nombre_fichero = 'BELICH_NUT_NO3'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrate/BELICH_NUT/'
+ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
-# C:\Users\lilia.flores\Nextcloud\Documents\Datos_MM_Art_2025\datasets_ncFormat\Biogeochemical\nutrients\nitrate\BELICH_NUT
+
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='BELICH_NUT_NO3'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
-ncfile.comment = 'A -1 value means LOWER THAN DETECTION LIMIT'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'BELICH_NUT'
+ncfile.project = 'BELICH'; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+ncfile.comment = 'Values of -1, indicating concentrations below the detection limit, have been replaced with NaN'
+
 # %%
 # crear dimensiones
 max_length_param = len("station X")
@@ -53,40 +57,55 @@ for dim in ncfile.dimensions.items():
 # %%
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
-
-parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
-parameter_var.long_name = 'station'
-parameter_var._Encoding = 'ascii'
-parameter_var[:,:] = stringtochar(estaciones_np)
-# %%
-value_var = ncfile.createVariable('nitrate', np.float64, ('time','station'))
-value_var.long_name = 'mass concentration of nitrate in sea water'
-value_var.units= '¿mg L-1?'
-value_var[:,:] = df_nitratos
 
 lat_var = ncfile.createVariable('latitude', np.float64,('station') )
 lat_var.units = 'degrees_north'
 lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
 lat_var[:] = [ 37.792949, 37.698052, 37.667697]
 
 lon_var = ncfile.createVariable('longitude', np.float64,('station') )
 lon_var.units = 'degrees_east'
 lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
-crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
-crs.long_name=  "Reference coordinate system"
-crs.grid_mapping_name = "latitude_longitude"
-crs.epsg_code = "EPSG:4326"
+# %%
+print(df_nitratos)
+valores_con_nan = ( df_nitratos *1000) / 62.0049 #paso de mg L-1 a umol L-1 
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+print(valores_con_nan)
+value_var = ncfile.createVariable('nitrate', np.float64, ('time','station'))
+value_var.units= 'umol L-1'
+value_var.standard_name = "mole_concentration_of_nitrate_in_sea_water"
+value_var.long_name = 'Nitrate concentration in sea water'
+value_var.cell_methods = "time: mean"
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var[:,:] = valores_con_nan
+value_var.comment  = "converted from original data assumed to be in mg/L to µmol/L "
 
+parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
+parameter_var.long_name = 'station'
+parameter_var._Encoding = 'ascii'
+parameter_var[:,:] = stringtochar(estaciones_np)
+
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
+crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
+crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
 # %%
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}nutrientes_3_estaciones_NITRATO.nc', "r")
+dataset = Dataset(f'{path}{nombre_fichero}.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -132,8 +151,10 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}BELICH_NUT_NO3.nc', f'{path}BELICH_NUT_NO3_display.txt')
-
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrate/BELICH_NUT/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 """
 .##....##.####.########.########..####.########..#######.
 .###...##..##.....##....##.....##..##.....##....##.....##
@@ -144,22 +165,22 @@ generar_txt(f'{path}BELICH_NUT_NO3.nc', f'{path}BELICH_NUT_NO3_display.txt')
 .##....##.####....##....##.....##.####....##.....#######.
 """
 # %%
-# path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/nitrito/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrite/BELICH_NUT'
 
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/nitrite/BELICH_NUT/'
+nombre_fichero = 'BELICH_NUT_NO2'
 
-ncfile = Dataset(f'{path}BELICH_NUT_NO2.nc', mode='w', format='NETCDF3_CLASSIC')
+ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='BELICH_NUT_NO2'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
-ncfile.comments = 'A -1 value means LOWER THAN DETECTION LIMIT'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'BELICH_NUT'
+ncfile.project = 'BELICH'; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+ncfile.comment = 'Values of -1, indicating concentrations below the detection limit, have been replaced with NaN'
 
 # %%
-
 df_nitritos =  data.iloc[:, [2,8,14]]
 ncfile.createDimension('time', len(dias_desde_1970))
 ncfile.createDimension('unit_char_len', max_length_param)
@@ -170,41 +191,56 @@ for dim in ncfile.dimensions.items():
 # %%
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
-
-parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
-parameter_var.long_name = 'station'
-parameter_var._Encoding = 'ascii'
-parameter_var[:,:] = stringtochar(estaciones_np)
-# %%
-value_var = ncfile.createVariable('nitrite', np.float64, ('time','station'))
-value_var.long_name = 'mass concentration of nitrite in sea water'
-value_var.units= '¿mg L-1?'
-value_var[:,:] = df_nitritos
 
 lat_var = ncfile.createVariable('latitude', np.float64,('station') )
 lat_var.units = 'degrees_north'
 lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
 lat_var[:] = [ 37.792949, 37.698052, 37.667697]
 
 lon_var = ncfile.createVariable('longitude', np.float64,('station') )
 lon_var.units = 'degrees_east'
 lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
-crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
-crs.long_name=  "Reference coordinate system"
-crs.grid_mapping_name = "latitude_longitude"
-crs.epsg_code = "EPSG:4326"
+# %%
+print(df_nitritos)
+valores_con_nan = ( df_nitritos *1000) / 46.01 #paso de mg L-1 a umol L-1 
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+print(valores_con_nan)
+value_var = ncfile.createVariable('nitrite', np.float64, ('time','station'))
+value_var.units= 'umol L-1'
+value_var.standard_name = "mole_concentration_of_nitrite_in_sea_water"
+value_var.long_name = 'Nitrite concentration in sea water'
+value_var.cell_methods = "time: mean"
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var.comment  = "converted from original data assumed to be in mg/L to µmol/L "
+value_var[:,:] = valores_con_nan
 
+parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
+parameter_var.long_name = 'station'
+parameter_var._Encoding = 'ascii'
+parameter_var[:,:] = stringtochar(estaciones_np)
+
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
+crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
+crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
 
 # %%
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}BELICH_NUT_NO2.nc', "r")
+dataset = Dataset(f'{path}{nombre_fichero}.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -250,8 +286,11 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}BELICH_NUT_NO2.nc', f'{path}BELICH_NUT_NO2_display.txt')
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrite/BELICH_NUT/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
  ********   *******    ******** ********     **     **********   *******
@@ -264,17 +303,18 @@ generar_txt(f'{path}BELICH_NUT_NO2.nc', f'{path}BELICH_NUT_NO2_display.txt')
 //         ///////   ////////  //       //      //     //       ///////
 """
 # %%
-# path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/fosfato/'
+nombre_fichero ='BELICH_NUT_PO4'
 path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/phosphate/BELICH_NUT'
-ncfile = Dataset(f'{path}BELICH_NUT_PO4.nc', mode='w', format='NETCDF3_CLASSIC')
+ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='BELICH_NUT_PO4'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
-ncfile.comment = 'A -1 value means LOWER THAN DETECTION LIMIT'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'BELICH_NUT'
+ncfile.project = 'BELICH'; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+ncfile.comment = 'Values of -1, indicating concentrations below the detection limit, have been replaced with NaN'
 
 # %%
 df_fosfatos =  data.iloc[:, [3,9,15]]
@@ -287,39 +327,56 @@ for dim in ncfile.dimensions.items():
 # %%
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
 
-parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
-parameter_var.long_name = 'station'
-parameter_var._Encoding = 'ascii'
-parameter_var[:,:] = stringtochar(estaciones_np)
 # %%
-value_var = ncfile.createVariable('phosphate', np.float64, ('time','station'))
-value_var.long_name = 'mass concentration of phosphate in sea water'
-value_var.units= '¿mg L-1?'
-value_var[:,:] = df_fosfatos
-
 lat_var = ncfile.createVariable('latitude', np.float64,('station') )
 lat_var.units = 'degrees_north'
 lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
 lat_var[:] = [ 37.792949, 37.698052, 37.667697]
 
 lon_var = ncfile.createVariable('longitude', np.float64,('station') )
 lon_var.units = 'degrees_east'
 lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
-crs = ncfile.createVariable("crs", "i")
-crs.long_name=  "Reference coordinate system"
+print(df_fosfatos)
+valores_con_nan = ( df_fosfatos *1000) / 94.97 #paso de mg L-1 a umol L-1 
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+print(valores_con_nan)
+
+value_var = ncfile.createVariable('phosphate', np.float64, ('time','station'))
+value_var.units= 'umol L-1'
+value_var.standard_name= 'mole_concentration_of_phosphate_in_sea_water'
+value_var.long_name = 'Phosphate concentration in sea water'
+value_var.cell_methods = "time: mean"
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+value_var[:,:] = valores_con_nan
+
+parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
+parameter_var.long_name = 'station'
+parameter_var._Encoding = 'ascii'
+parameter_var[:,:] = stringtochar(estaciones_np)
+
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
 crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
 crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
 # %%
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}BELICH_NUT_PO4.nc', "r")
+dataset = Dataset(f'{path}{nombre_fichero}.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -365,7 +422,10 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}BELICH_NUT_PO4.nc', f'{path}BELICH_NUT_PO4_display.txt')
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/phosphate/BELICH_NUT/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
   ******** ** **       **   ******      **     **********   *******
@@ -378,56 +438,74 @@ generar_txt(f'{path}BELICH_NUT_PO4.nc', f'{path}BELICH_NUT_PO4_display.txt')
 ////////  // //////// //   //////  //      //     //       ///////
 """
 # %%
-# path_viejo= 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/silicato/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/silicate/SiO4'
-ncfile = Dataset(f'{path}BELICH_NUT_SiO4.nc', mode='w', format='NETCDF3_CLASSIC')
+nombre_fichero ='BELICH_NUT_SiO4'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/silicate/'
+ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='BELICH_NUT_SiO4'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
-ncfile.comment = 'A -1 value means LOWER THAN DETECTION LIMIT'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'BELICH_NUT'
+ncfile.project = 'BELICH'; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+ncfile.comment = 'Values of -1, indicating concentrations below the detection limit, have been replaced with NaN'
 # %%
 df_silicatos =  data.iloc[:, [4,10,16]]
+print(df_silicatos)
+valores_con_nan = ( df_silicatos *1000) / 96.06 #paso de mg L-1 a umol L-1 
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+print(valores_con_nan)
+
 ncfile.createDimension('time', len(dias_desde_1970))
 ncfile.createDimension('unit_char_len', max_length_param)
 ncfile.createDimension('station', len(estaciones))
 for dim in ncfile.dimensions.items():
     print(dim)
 
-# %%
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
+
+
+# %%
+lat_var = ncfile.createVariable('latitude', np.float64,('station') )
+lat_var.units = 'degrees_north'
+lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
+lat_var[:] = [ 37.792949, 37.698052, 37.667697]
+
+lon_var = ncfile.createVariable('longitude', np.float64,('station') )
+lon_var.units = 'degrees_east'
+lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
+lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
+
+value_var = ncfile.createVariable('silicate', np.float64, ('time','station'))
+value_var.units= 'umol L-1'
+value_var.standard_name = "mole_concentration_of_silicate_in_sea_water"
+value_var.long_name = 'Silicate concentration in sea water'
+value_var.cell_methods = "time: mean"
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
 parameter_var.long_name = 'station'
 parameter_var._Encoding = 'ascii'
 parameter_var[:,:] = stringtochar(estaciones_np)
 # %%
-value_var = ncfile.createVariable('silicate', np.float64, ('time','station'))
-value_var.long_name = 'mass concentration of silicate in sea water'
-value_var.units= '¿mg L-1?'
-value_var[:,:] = df_silicatos
-
-lat_var = ncfile.createVariable('latitude', np.float64,('station') )
-lat_var.units = 'degrees_north'
-lat_var.standard_name = "latitude"
-lat_var[:] = [ 37.792949, 37.698052, 37.667697]
-
-lon_var = ncfile.createVariable('longitude', np.float64,('station') )
-lon_var.units = 'degrees_east'
-lon_var.standard_name = "longitude"
-lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
-
-crs = ncfile.createVariable("crs", "i")
-crs.long_name = "Reference coordinate system"
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
 crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
 crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
 # %%
 ncfile.close()
 
@@ -478,7 +556,11 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}BELICH_NUT_SiO4.nc', f'{path}BELICH_NUT_SiO4_display.txt')
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
+
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/silicate/BELICH_NUT/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
      **     ****     ****   *******   ****     ** **   *******
@@ -490,17 +572,18 @@ generar_txt(f'{path}BELICH_NUT_SiO4.nc', f'{path}BELICH_NUT_SiO4_display.txt')
 /**     /**/**        /** //*******  /**    //***/** //*******
 //      // //         //   ///////   //      /// //   ///////
 """
-# path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/amonio/'
+nombre_fichero='BELICH_NUT_NH4'
 path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/ammonium/NH4'
-ncfile = Dataset(f'{path}BELICH_NUT_NH4.nc', mode='w', format='NETCDF3_CLASSIC')
+ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='BELICH_NUT_NH4'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
-ncfile.comment = 'A -1 value means LOWER THAN DETECTION LIMIT'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'BELICH_NUT'
+ncfile.project = 'BELICH'; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+ncfile.comment = 'Values of -1, indicating concentrations below the detection limit, have been replaced with NaN'
 
 # %%
 df_amonio =  data.iloc[:, [5,11,17]]
@@ -513,39 +596,55 @@ for dim in ncfile.dimensions.items():
 # %%
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
-
-parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
-parameter_var.long_name = 'station'
-parameter_var._Encoding = 'ascii'
-parameter_var[:,:] = stringtochar(estaciones_np)
-# %%
-value_var = ncfile.createVariable('ammonium', np.float64, ('time','station'))
-value_var.long_name = 'mass_concentration_of_ammonium_in_sea_water'
-value_var.units= '¿mg L-1?'
-value_var[:,:] = df_amonio
 
 lat_var = ncfile.createVariable('latitude', np.float64,('station') )
 lat_var.units = 'degrees_north'
 lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
 lat_var[:] = [ 37.792949, 37.698052, 37.667697]
 
 lon_var = ncfile.createVariable('longitude', np.float64,('station') )
 lon_var.units = 'degrees_east'
 lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
+# %%
+print(df_amonio)
+valores_con_nan = ( df_amonio *1000) / 18.04 #paso de mg L-1 a umol L-1 
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+print(valores_con_nan)
 
-crs = ncfile.createVariable("crs", "i")
-crs.long_name=  "Reference coordinate system"
+value_var = ncfile.createVariable('ammonium', np.float64, ('time','station'))
+value_var.units= 'umol L-1'
+value_var.standard_name = "mole_concentration_of_ammonium_in_sea_water"
+value_var.long_name = 'Ammonium concentration in sea water'
+value_var.cell_methods = "time: mean"
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+value_var[:,:] = valores_con_nan
+
+parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
+parameter_var.long_name = 'station'
+parameter_var._Encoding = 'ascii'
+parameter_var[:,:] = stringtochar(estaciones_np)
+
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
 crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
 crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
 # %%
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}BELICH_NUT_NH4.nc', "r")
+dataset = Dataset(f'{path}{nombre_fichero}.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -591,7 +690,10 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}BELICH_NUT_NH4.nc', f'{path}BELICH_NUT_NH4_display.txt')
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/ammonium/BELICH_NUT/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 
 # %% 
 """
@@ -605,17 +707,18 @@ generar_txt(f'{path}BELICH_NUT_NH4.nc', f'{path}BELICH_NUT_NH4_display.txt')
 ///////   // //      ///
 """
 # %%
-# path_viejo = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/set3-julia/din/'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/din/BELICH_NUT_DIN'
-ncfile = Dataset(f'{path}BELICH_NUT_DIN.nc', mode='w', format='NETCDF3_CLASSIC')
+nombre_fichero ='BELICH_NUT_DIN'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/din/N'
+ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
 # %% CREAR ATRIBUTOS GLOBALES
-ncfile.title='BELICH_NUT_DIN'
+ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
-ncfile.domain= 'Mar menor coastal lagoon'
-ncfile.project = 'XXXX'; ncfile.source = 'XXX'; ncfile.Conventions = 'CF-1.8'
-ncfile.comment = 'A -1 value means LOWER THAN DETECTION LIMIT'
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = 'BELICH_NUT'
+ncfile.project = 'BELICH'; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+ncfile.comment = 'Values of -1, indicating concentrations below the detection limit, have been replaced with NaN'
 
 # %%
 df_din = data.iloc[:, [6,12,18]]
@@ -628,41 +731,55 @@ for dim in ncfile.dimensions.items():
 # %%
 time_var = ncfile.createVariable('time', np.float64, ('time',))
 time_var.units = "days since 1970-01-01 00:00:0"
-time_var.standard_name = "time"
 time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
 time_var[:] = dias_desde_1970.values  # Se asigna directamente
+
+lat_var = ncfile.createVariable('latitude', np.float64,('station') )
+lat_var.units = 'degrees_north'
+lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
+lat_var[:] = [ 37.792949, 37.698052, 37.667697]
+
+lon_var = ncfile.createVariable('longitude', np.float64,('station') )
+lon_var.units = 'degrees_east'
+lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
+lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
+
+print(df_amonio)
+valores_con_nan = ( df_amonio *1000) / 14.01 #paso de mg L-1 a umol L-1 
+valores_con_nan[np.isnan(valores_con_nan)] = -9999
+print(valores_con_nan)
+
+value_var = ncfile.createVariable('din', np.float64, ('time','station'))
+value_var.units= 'umol L-1'
+value_var.standard_name = "mole_concentration_of_dissolved_inorganic_nitrogen_in_sea_water"
+value_var.long_name = 'Dissolved inorganic nitrogen concentration in sea water'
+value_var.cell_methods = "time: mean"
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
 parameter_var.long_name = 'station'
 parameter_var._Encoding = 'ascii'
 parameter_var[:,:] = stringtochar(estaciones_np)
 
-# %%
-value_var = ncfile.createVariable('din', np.float64, ('time','station'))
-value_var.long_name = 'mass_concentration_of_dissolved_inorganic_nitrogen_in_sea_water'
-value_var.units= '¿mg -L?'
-value_var[:,:] = df_din
-value_var.comment = 'DIN is the sum of nitrate, nitrite and ammonium concentrations in seawater'
-
-lat_var = ncfile.createVariable('latitude', np.float64,('station') )
-lat_var.units = 'degrees_north'
-lat_var.standard_name = "latitude"
-lat_var[:] = [ 37.792949, 37.698052, 37.667697]
-
-lon_var = ncfile.createVariable('longitude', np.float64,('station') )
-lon_var.units = 'degrees_east'
-lon_var.standard_name = "longitude"
-lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
-
-crs = ncfile.createVariable("crs", "i")
-crs.long_name=  "Reference coordinate system"
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
 crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
 crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
 # %%
 ncfile.close()
 
 # %% COMPROBACION
-dataset = Dataset(f'{path}BELICH_NUT_DIN.nc', "r")
+dataset = Dataset(f'{path}{nombre_fichero}.nc', "r")
 print(dataset.variables.keys())  # Ver las variables en el archivo
 
 print("\n🔹 Atributos de las Variables:")
@@ -708,5 +825,8 @@ plt.tight_layout()
 plt.show()
 
 # %%
-generar_txt(f'{path}BELICH_NUT_DIN.nc', f'{path}BELICH_NUT_DIN.txt')
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/din/BELICH_NUT/'
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
