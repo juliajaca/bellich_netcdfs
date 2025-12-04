@@ -26,7 +26,7 @@ epoch = pd.Timestamp('1970-01-01')
 dias_desde_1970 = (fechas_unicas_ts - epoch) / pd.Timedelta(days=1)
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/IEO_SAT/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/IEO_SAT_BELA_MAPS/'
 nombre_fichero= 'IEO_SAT_BELA_MAPS'
 # %%
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
@@ -168,6 +168,6 @@ plt.show()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/IEO_SAT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/IEO_SAT_BELA_MAPS/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%

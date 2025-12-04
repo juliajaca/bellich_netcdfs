@@ -1,0 +1,192 @@
+# %%
+from netCDF4 import Dataset, stringtochar
+import numpy as np
+import pandas as pd
+import shutil
+import os
+import matplotlib.pyplot as plt
+import sys
+sys.path.append("../")
+from generar_txt import generar_txt
+# %%
+n_dataset ='EUROGEL'
+nombre_fichero = 'EUROGEL_CHL'
+
+data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/060325_resumen_historicos.xlsx',  dtype={  
+"valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud'])
+
+# %%
+oxy = data0.loc[(data0['var'] == 'chl-a') & (data0['muestreo'] == 'EUROGEL')]
+print(data0.head())
+print(f'tiene una longitud de {len(data0)} filas')
+oxy = oxy.replace(np.nan, -9999) #reemplazo los nan por -9999 
+print(oxy.tail())
+# %%
+max_length_param = len("E01")
+estaciones = ['E02',  'E06', 'E13', 'E17', 'E23', 'E24', ]
+estaciones_np = np.array(estaciones, dtype=f'S{max(len(s) for s in estaciones)}')
+depths = oxy.profundidad.unique()
+
+# Creamos una máscara booleana: True si el número es entero
+mask_enteros = (depths == np.floor(depths))
+# Aplicamos la máscara
+depths_enteros = np.sort(depths[mask_enteros])
+depths_bottom = np.sort(depths[~mask_enteros])
+
+# %%
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/EUROGEL/'
+path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/'
+
+data = oxy.sort_values(by=["fecha", "estacion", 'profundidad']).reset_index(drop=True)
+print('la longitud antes es', len(data))
+data = data.drop_duplicates()
+print('la longitud despues es', len(data))
+data['fecha'] = pd.to_datetime(data['fecha'], errors='coerce')
+epoch = pd.Timestamp('1970-01-01')
+dias_desde_1970 = (data.fecha.drop_duplicates() - epoch) / pd.Timedelta(days=1)
+print(data.head())
+print(f'tiene una longitud de {len(data)} filas')
+
+# %%
+ncfile = Dataset(f"{path}/{nombre_fichero}.nc", mode='w', format='NETCDF3_CLASSIC')
+
+ncfile.title = nombre_fichero
+ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
+ncfile.domain= 'Mar menor coastal lagoon, Spain'
+ncfile.dataset_id = n_dataset
+ncfile.project = n_dataset; ncfile.source = 'In situ data collection'; ncfile.Conventions = 'CF-1.8'
+
+ncfile.createDimension('time', len(dias_desde_1970))
+ncfile.createDimension('unit_char_len', max_length_param)
+ncfile.createDimension('station_name', len(estaciones_np))
+ncfile.createDimension('depth', len(depths_enteros))
+ncfile.createDimension('depth_bottom', len(depths_bottom))
+
+for dim in ncfile.dimensions.items():
+    print(dim)
+
+time_var = ncfile.createVariable('time', np.float64, ('time',))
+time_var.units = "days since 1970-01-01 00:00:0"
+time_var.calendar = 'gregorian'
+time_var.standard_name = "time"
+time_var[:] = dias_desde_1970.values  # Se asigna directamente
+
+lat_var = ncfile.createVariable('latitude', np.float64,('station_name') )
+lat_var.units = 'degrees_north'
+lat_var.standard_name = "latitude"
+lat_var.grid_mapping = "crs"
+lat_var[:] =  [ 37.7833,  37.75,  37.71667, 37.7, 
+               37.66667, 37.65, ]
+
+lon_var = ncfile.createVariable('longitude', np.float64,('station_name') )
+lon_var.units = 'degrees_east'
+lon_var.standard_name = "longitude"
+lon_var.grid_mapping = "crs"
+lon_var[:] = [ -0.78333,  -0.78333,   -0.78333, -0.78333, 
+              -0.76667,-0.75 ]
+
+depth_var = ncfile.createVariable('depth',np.int8, ('depth',))
+depth_var.units = 'meters'
+depth_var.standard_name = 'depth'
+depth_var.positive = 'down'
+depth_var.comment = 'Depth values missing. 0 is used instead of NaN.'
+depth_var[:] = 0
+
+value_var = ncfile.createVariable('chlorophyll', np.float32, ('time', 'station_name',))
+value_var.units = 'mg/m3'
+value_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
+value_var.long_name= 'Chlorophyll-a Concentration in Sea Water'
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+value_var.comment = ''
+
+
+data_fondo = oxy.sort_values(by=["fecha", "estacion"]).reset_index(drop=True)
+pivot = data_fondo.pivot_table(index='fecha',  columns=['estacion',], values='valor')
+
+value_var[:,:] = pivot
+# -----
+
+parameter_var = ncfile.createVariable('station', 'S1', ('station_name', 'unit_char_len'))
+parameter_var.long_name = 'station'
+parameter_var._Encoding = 'ascii'
+parameter_var[:,:] = stringtochar(estaciones_np)
+
+crs = ncfile.createVariable("crs", "i")  # Dummy variable for coordinate reference system
+crs.grid_mapping_name = "latitude_longitude"
+crs.projection = "Geodetic"
+crs.long_name = "WGS 84 / Geographic coordinates (EPSG:4326)"
+crs.epsg_code = "EPSG:4326"
+crs.semi_major_axis = 6378137.0
+crs.inverse_flattening = 298.257223563
+crs.comment = "Geographic coordinates are referenced to WGS 84 (EPSG:4326) in decimal degrees."
+
+ncfile.close()
+
+# %% COMPROBACION
+dataset = Dataset(f'{path}{nombre_fichero}.nc', "r")
+print(dataset.variables.keys())  # Ver las variables en el archivo
+
+print("\n🔹 Atributos de las Variables:")
+for var_name in dataset.variables:
+    print(f"\nVariable: {var_name}")
+    for attr in dataset.variables[var_name].ncattrs():
+        print(f"  {attr}: {dataset.variables[var_name].getncattr(attr)}")
+
+print("\n🔹 Atributos Globales:")
+for attr in dataset.ncattrs():
+    print(f"{attr}: {dataset.getncattr(attr)}")
+
+unit = dataset.variables['chlorophyll'][:]
+station = dataset.variables['station'][:]
+tiempo = dataset.variables["time"][:]  # Días desde 1970
+
+northing = dataset.variables['latitude'][:]
+easting = dataset.variables['longitude'][:]
+crs = dataset.variables['crs']
+
+
+print(station)
+print(tiempo); print('-----------------')
+print(unit); print('-----------------')
+
+
+print(northing); print('-----------------')
+print(easting); print('-----------------')
+print(crs); print('-----------------')
+
+fechas = pd.to_datetime(tiempo, origin="1970-01-01", unit="D")
+fechas = np.array(fechas) 
+dataset.close()
+
+# %%
+
+generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
+# %%
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/'
+
+shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
+
+# %%FIGURA
+# Reemplazamos -9999 por NaN
+unit_plot = unit.astype(float)
+
+# Reemplazamos -9999 por NaN
+unit_plot[unit_plot == -9999] = np.nan
+
+for i, station in enumerate(estaciones):
+    plt.figure(figsize=(12, 6))
+    
+    plt.plot(fechas, unit[:, i], 'k--', linewidth=2,)
+    
+    plt.title(f'Temporal Profile - Station {station}')
+    plt.xlabel('Date')
+    plt.ylabel('chlorophyll (mg/m3)')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    file_name = f'{station}_temporal_profile.png'
+    plt.savefig(os.path.join(path, file_name), dpi=300)
+    plt.show()
+    plt.close()
+# %%
