@@ -9,14 +9,14 @@ import sys
 sys.path.append("../")
 from generar_txt import generar_txt
 # %%
-n_dataset ='IEO_COMU_2'
-nombre_fichero = 'IEO_COMU_2_TEMP_SW' #TESIS DE JUANA CANO
+n_dataset ='IEO_COMU_3'
+nombre_fichero = 'IEO_COMU_3_TEMP_SW' #TESIS DE JUANA CANO
 
-data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/060325_resumen_historicos.xlsx',  dtype={  
-"valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud'])
+data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/IEO_COMU(juanayjulio)julia.xlsx',  dtype={  
+"valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud', 'Referencia'])
 
 # %%
-oxy = data0.loc[(data0['var'] == 'temp') & (data0['muestreo'] == 'Juana Cano')]
+oxy = data0.loc[(data0['var'] == 'temp') & (data0['muestreo'] == 'Juana Cano')& (data0['Referencia'] == 'Excel JC88-92')  ]
 print(data0.head())
 print(f'tiene una longitud de {len(data0)} filas')
 oxy = oxy.replace(np.nan, -9999) #reemplazo los nan por -9999 
@@ -28,7 +28,7 @@ estaciones_np = np.array(estaciones, dtype=f'S{max(len(s) for s in estaciones)}'
 
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Hydrodynamics/temperature/IEO_COMU_2/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Hydrodynamics/temperature/IEO_COMU_3/'
 path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Hydrodynamics/temperature/'
 
 data = oxy.sort_values(by=["fecha", "estacion", 'profundidad']).reset_index(drop=True)

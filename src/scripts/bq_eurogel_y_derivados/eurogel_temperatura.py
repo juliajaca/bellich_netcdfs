@@ -10,7 +10,7 @@ sys.path.append("../")
 from generar_txt import generar_txt
 # %%
 n_dataset ='EUROGEL'
-nombre_fichero = 'EUROGEL_TEMP'
+nombre_fichero = 'EUROGEL_TEMP_SW'
 
 data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/060325_resumen_historicos.xlsx',  dtype={  
 "valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud'])

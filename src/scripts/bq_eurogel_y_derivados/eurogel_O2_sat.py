@@ -104,17 +104,17 @@ depth_var.positive = 'down'
 depth_var[:] = depths_bottom
 
 value_var = ncfile.createVariable('oxygen_saturation', np.float32, ('time', 'station_name', 'depth'))
-value_var.units = 'mg/l'
-value_var.standard_name = 'mass_concentration_of_oxygen_in_sea_water'
-value_var.long_name = 'dissolved oxygen concentration'
+value_var.units = '%'
+value_var.standard_name = 'oxygen_saturation'
+value_var.long_name = 'Oxygen saturation in seawater'
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
 value_var.comment = ''
 
 value_var2 = ncfile.createVariable('oxygen_saturation_at_bottom', np.float32, ('time', 'station_name'))
-value_var2.units = 'mg/l'
-value_var2.standard_name = 'mass_concentration_of_oxygen_in_sea_water'
-value_var2.long_name = 'dissolved oxygen concentration at bottom'
+value_var2.units = '%'
+value_var2.standard_name = 'oxygen_saturation'
+value_var2.long_name = 'Oxygen saturation in seawater'
 value_var2.missing_value = -9999
 value_var2.grid_mapping = "crs"
 value_var2.comment = 'oxygen saturation at bottom of the station'
@@ -266,7 +266,7 @@ for i, station in enumerate(estaciones):
     
     plt.title(f'Temporal Profile - Station {station}')
     plt.xlabel('Date')
-    plt.ylabel('oxygen saturation(mg/l)')
+    plt.ylabel('oxygen saturation(%)')
     plt.legend()
     plt.grid(True)
     plt.tight_layout()

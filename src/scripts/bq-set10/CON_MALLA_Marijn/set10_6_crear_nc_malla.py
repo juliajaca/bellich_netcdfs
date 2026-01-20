@@ -59,7 +59,7 @@ data_2d = np.array(data_list)
 # %%
 
 path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/BELICH_SAT_BELA_MAPS/'
-nombre_fichero= 'BELICH_SAT_BELA_MAPS'
+nombre_fichero= 'BELICH_SAT_BELA_MAPS_CHL'
 # %%
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF4_CLASSIC')
 # NETCDF3_CLASSIC siempre prealoca en disco toda la variable al crearla.
@@ -104,7 +104,7 @@ lon_var[:] = np.unique(lons)
 
 # %%
 chl_var = ncfile.createVariable('chlorophyll', np.float64, ("time", "latitude", "longitude"), fill_value=None)
-chl_var.units = 'ug L-1'
+chl_var.units = 'mg m-3'
 chl_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
 chl_var.long_name = 'Surface chlorophyll concentration from satellite'
 chl_var.missing_value = -9999

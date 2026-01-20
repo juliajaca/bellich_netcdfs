@@ -78,7 +78,7 @@ date_var.bounds = "time_bnds"
 date_var[:] = data['Días desde 1970'].values
 
 chl_var = ncfile.createVariable('chlorophyll', np.float64, ('time',))
-chl_var.units = 'ug L-1'
+chl_var.units = 'mg m-3'
 chl_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
 chl_var.long_name = 'Chlorophyll-a Concentration in Sea Water'
 chl_var.cell_methods = 'time: mean'
@@ -146,7 +146,7 @@ plt.xlabel("Fecha"); plt.ylabel("mean chl (microg/L)"); plt.title("Serie Tempora
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
 
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/BELICH_BIOGQ_V3/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
@@ -192,7 +192,7 @@ date_var[:] = data['Días desde 1970'].values
 nitrato_var = ncfile.createVariable('nitrate', np.float64, ('time',))
 nitrato_var.units = 'umol L-1'
 nitrato_var.standard_name = 'mole_concentration_of_nitrate_in_sea_water'
-nitrato_var.long_name = 'Nitrate concentration in sea water'
+nitrato_var.long_name = 'Dissolved nitrate concentration in sea water'
 nitrato_var.cell_methods = 'time: mean'
 nitrato_var.missing_value = -9999
 nitrato_var[:] = data["Nitrato (microM) Promedio"].values
@@ -254,7 +254,7 @@ plt.xlabel("Fecha"); plt.ylabel("mean nitrato (microM/L)"); plt.title("Serie Tem
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrate/BELICH_BIOGQ_V3/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrate/'
 
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
@@ -301,7 +301,7 @@ date_var[:] = data['Días desde 1970'].values
 nitrato_var = ncfile.createVariable('nitrite', np.float64, ('time',))
 nitrato_var.units = 'umol L-1'
 nitrato_var.standard_name = 'mole_concentration_of_nitrite_in_sea_water'
-nitrato_var.long_name = 'Nitrite concentration in sea water'
+nitrato_var.long_name = 'Dissolved nitrite concentration in sea water'
 nitrato_var.cell_methods = 'time: mean'
 nitrato_var.missing_value = -9999
 nitrato_var[:] = data["Nitrito (microM) Promedio"].values
@@ -363,7 +363,7 @@ plt.xlabel("Fecha"); plt.ylabel("mean nitrito (microM/L)"); plt.title("Serie Tem
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrite/BELICH_BIOGQ_V3/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrite/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
@@ -386,7 +386,7 @@ print(ncfile)
 ncfile.title= nombre_fichero
 ncfile.institution="Instituto Español de Oceanografía (IEO), Spain"
 ncfile.domain= 'Mar menor coastal lagoon, Spain'
-ncfile.dataset_id = 'BELICH_BIOGQ_v3'
+ncfile.dataset_id = 'BELICH_BIOGQ_V3'
 ncfile.project = 'BELICH'
 ncfile.source = 'In situ data collection'
 ncfile.Conventions = 'CF-1.8'
@@ -408,7 +408,7 @@ date_var[:] = data['Días desde 1970'].values
 nitrato_var = ncfile.createVariable('phosphate', np.float64, ('time',))
 nitrato_var.units = 'umol L-1'
 nitrato_var.standard_name = 'mole_concentration_of_phosphate_in_sea_water'
-nitrato_var.long_name = 'Phosphate concentration in sea water'
+nitrato_var.long_name = 'Dissolved phosphate concentration in sea water'
 nitrato_var.cell_methods = 'time: mean'
 nitrato_var.missing_value = -9999
 nitrato_var[:] = data["Fosfato (microM) Promedio"].values
@@ -470,6 +470,6 @@ plt.xlabel("Fecha"); plt.ylabel("mean fosfato (microM/L)"); plt.title("Serie Tem
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/phosphate/BELICH_BIOGQ_V3/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/phosphate/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%

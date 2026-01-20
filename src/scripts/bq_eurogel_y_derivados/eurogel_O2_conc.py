@@ -104,7 +104,7 @@ depth_var.positive = 'down'
 depth_var[:] = depths_bottom
 
 value_var = ncfile.createVariable('oxygen', np.float32, ('time', 'station_name', 'depth'))
-value_var.units = 'mg/l'
+value_var.units = 'mg L-1'
 value_var.standard_name = 'mass_concentration_of_oxygen_in_sea_water'
 value_var.long_name = 'dissolved oxygen concentration'
 value_var.missing_value = -9999

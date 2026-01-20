@@ -16,7 +16,8 @@ data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemic
 "valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud'])
 
 # %%
-turb = data0.loc[data0['var'] == 'turb']
+turb = data0.loc[(data0['var'] == 'turb' )& (data0['muestreo'] == 'EUROGEL')]
+
 print(data0.head())
 print(f'tiene una longitud de {len(data0)} filas')
 turb = turb.replace(np.nan, -9999) #reemplazo los nan por -9999 

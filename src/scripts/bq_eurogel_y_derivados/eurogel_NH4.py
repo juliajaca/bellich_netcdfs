@@ -106,17 +106,17 @@ depth_var.positive = 'down'
 depth_var[:] = depths_bottom
 
 value_var = ncfile.createVariable('ammonium', np.float32, ('time', 'station_name', 'depth'))
-value_var.units = 'µmol/L'
+value_var.units = 'umol L-1'
 value_var.standard_name = 'mole_concentration_of_ammonium_in_sea_water'
-value_var.long_name = 'Ammonium concentration in sea water'
+value_var.long_name = 'Dissolved ammonium concentration in sea water'
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
 value_var.comment = ''
 
 value_var2 = ncfile.createVariable('ammonium_at_bottom', np.float32, ('time', 'station_name'))
-value_var2.units = 'µmol/L'
+value_var2.units = 'umol L-1'
 value_var2.standard_name = 'mole_concentration_of_ammonium_in_sea_water'
-value_var2.long_name = 'Ammonium concentration in sea water'
+value_var2.long_name = 'Dissolved ammonium concentration in sea water'
 value_var2.missing_value = -9999
 value_var2.grid_mapping = "crs"
 value_var2.comment = 'ammonium at bottom of the station'
@@ -232,7 +232,6 @@ fechas = np.array(fechas)
 dataset.close()
 
 # %%
-
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}_display.txt')
 # %%
 ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/ammonium/'

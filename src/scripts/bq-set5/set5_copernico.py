@@ -52,7 +52,7 @@ valores_con_nan[np.isnan(valores_con_nan)] = -9999
 print(valores_con_nan)
 
 value_var = ncfile.createVariable('chlorophyll', np.float64, ('time',))
-value_var.units= 'ug L-1'
+value_var.units= 'mg m-3'
 value_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
 value_var.long_name = 'Chlorophyll-a Concentration in Sea Wate'
 value_var.cell_methods= 'Mean chlorophyll concentration over a specified region from satellite. Methodology missing!'
@@ -108,6 +108,6 @@ plt.show()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/IEO_SAT_CORR/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%

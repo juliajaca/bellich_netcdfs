@@ -9,14 +9,13 @@ import sys
 sys.path.append("../")
 from generar_txt import generar_txt
 # %%
-n_dataset ='IEO_COMU_1'
-nombre_fichero = 'IEO_COMU_1_CHL' #TESIS DE JUANA CANO
-
-data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/060325_resumen_historicos.xlsx',  dtype={  
+n_dataset ='IEO_COMU_2'
+nombre_fichero = 'IEO_COMU_2_OXY' #TESIS DE Juli
+data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/IEO_COMU(juanayjulio)julia.xlsx',  dtype={  
 "valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud', 'Referencia'])
 
 # %%
-oxy = data0.loc[(data0['var'] == 'chl') & (data0['Referencia'] == 'Excel ARG8182')]
+oxy = data0.loc[(data0['var'] == 'O2 conc') & (data0['Referencia'] == 'Excel JM86')]
 print(data0.head())
 print(f'tiene una longitud de {len(data0)} filas')
 oxy = oxy.replace(np.nan, -9999) #reemplazo los nan por -9999 
@@ -28,8 +27,8 @@ estaciones_np = np.array(estaciones, dtype=f'S{max(len(s) for s in estaciones)}'
 
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/IEO_COMU_1/'
-path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/oxygen/IEO_COMU_2/'
+path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/oxygen/'
 
 data = oxy.sort_values(by=["fecha", "estacion", 'profundidad']).reset_index(drop=True)
 print('la longitud antes es', len(data))
@@ -41,22 +40,28 @@ dias_desde_1970 = (data.fecha.drop_duplicates() - epoch) / pd.Timedelta(days=1)
 print(data.head())
 print(f'tiene una longitud de {len(data)} filas')
 
+# asignar level
+data["level"] = (
+    data.sort_values("profundidad")
+      .groupby(["estacion", "fecha"])
+      .cumcount()
+)
+
 # %%
-ncfile = Dataset(f"{path}/{nombre_fichero}.nc", mode='w', format='NETCDF3_CLASSIC')
+ncfile = Dataset(f"{path}{nombre_fichero}.nc", mode='w', format='NETCDF3_CLASSIC')
 
 ncfile.title = nombre_fichero
 ncfile.institution= "Oceanographic Center of Murcia (COMU), Spain"
 ncfile.domain= 'Mar menor coastal lagoon, Spain'
 ncfile.dataset_id = n_dataset
-ncfile.project ='Not associated with a specific project'
+ncfile.project ='OSTRAS'
 ncfile.source = 'In situ data collection'
 ncfile.Conventions = 'CF-1.8'
 
 ncfile.createDimension('time', len(dias_desde_1970))
 ncfile.createDimension('unit_char_len', max_length_param)
 ncfile.createDimension('station_name', len(estaciones_np))
-ncfile.createDimension('depth', len([0,5.25]))
-
+ncfile.createDimension('level', 3)
 
 for dim in ncfile.dimensions.items():
     print(dim)
@@ -79,22 +84,20 @@ lon_var.standard_name = "longitude"
 lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.783333,-0.783333, -0.743333]
 
-depth_var = ncfile.createVariable('depth',np.float32, ('depth',))
+level_var = ncfile.createVariable('level', np.float32, ('level'))
+level_var.long_name = 'sampling level'
+level_var.comment = "0=surface, 1=mid-water, 2=bottom"
+level_var[:] = [0,1,2]
+# ---------------------------------
+depth_var = ncfile.createVariable('depth',np.float32, ('time','station_name', 'level'))
 depth_var.units = 'meters'
 depth_var.standard_name = 'depth'
 depth_var.positive = 'down'
-depth_var.comment = 'Depth values indicate position only (not measured depths): 0 m for surface, 5.25 m for seabed.'
-depth_var[:] = [0, 5.25]
+# depth_var.comment = ''
 
-value_var = ncfile.createVariable('chlorophyll', np.float32, ('time', 'station_name','depth'))
-value_var.units = 'mg/m3'
-value_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
-value_var.long_name= 'Chlorophyll-a Concentration in Sea Water'
-value_var.missing_value = -9999
-value_var.grid_mapping = "crs"
-value_var.comment = ''
+# ------------
+pivot = data.pivot_table(index='fecha',  columns=['estacion', 'level'], values='profundidad')
 
-pivot = data.pivot_table(index='fecha',  columns=['estacion', 'profundidad'], values='valor')
 # Todas las fechas
 all_dates = pd.to_datetime(data.fecha.drop_duplicates()).sort_values()
 
@@ -102,11 +105,40 @@ all_dates = pd.to_datetime(data.fecha.drop_duplicates()).sort_values()
 pivot = pivot.reindex(all_dates)
 
 times = pd.to_datetime(data.fecha.drop_duplicates()).sort_values()
-valor_array_3d = np.full((len(times), len(estaciones), len([0,1])), np.nan)
+valor_array_3d = np.full((len(times), len(estaciones), len([0,1,2])), np.nan)
 
 for i, station in enumerate(estaciones):
     print(station)
-    for j, depth in enumerate(['superficie','fondo']):
+    for j, depth in enumerate([0,1,2]):
+       
+        try:
+            valor_array_3d[:, i, j] = pivot[(station, depth)].values
+        except KeyError:
+            pass  # si no hay datos
+
+depth_var[:,:,:] = valor_array_3d
+# ---------------------------------
+
+value_var = ncfile.createVariable('oxygen', np.float32, ('time', 'station_name','level'))
+value_var.units = 'mg L-1'
+value_var.standard_name = 'mass_concentration_of_oxygen_in_sea_water'
+value_var.long_name = 'dissolved oxygen concentration'
+value_var.missing_value = -9999
+value_var.grid_mapping = "crs"
+
+pivot = data.pivot_table(index='fecha',  columns=['estacion', 'level'], values='valor')
+
+# Todas las fechas
+all_dates = pd.to_datetime(data.fecha.drop_duplicates()).sort_values()
+
+# Reindexar pivot para que tenga todas las fechas
+pivot = pivot.reindex(all_dates)
+
+times = pd.to_datetime(data.fecha.drop_duplicates()).sort_values()
+valor_array_3d = np.full((len(times), len(estaciones), len([0,1,2])), np.nan)
+for i, station in enumerate(estaciones):
+    print(station)
+    for j, depth in enumerate([0,1,2]):
        
         try:
             valor_array_3d[:, i, j] = pivot[(station, depth)].values
@@ -146,10 +178,11 @@ print("\n🔹 Atributos Globales:")
 for attr in dataset.ncattrs():
     print(f"{attr}: {dataset.getncattr(attr)}")
 
-unit = dataset.variables['chlorophyll'][:]
+unit = dataset.variables['oxygen'][:]
 stations = dataset.variables['station'][:]
 tiempo = dataset.variables["time"][:]  # Días desde 1970
 prof = dataset.variables['depth'][:]
+level = dataset.variables['level'][:]
 
 northing = dataset.variables['latitude'][:]
 easting = dataset.variables['longitude'][:]
@@ -158,6 +191,7 @@ crs = dataset.variables['crs']
 print(stations)
 print(tiempo); print('-----------------')
 print(unit); print('-----------------')
+print(level); print('-----------------')
 
 print(northing); print('-----------------')
 print(easting); print('-----------------')
@@ -185,15 +219,16 @@ for i_station, station in enumerate(stations):
     plt.figure(figsize=(12,6))   # ← figura nueva para cada estación
 
     # Para cada profundidad, trazamos la serie de esa estación
-    for i_depth, depth in enumerate(prof):
+    for i_depth, depth in enumerate(level):
         plt.plot(fechas,
                  unit_plot[:, i_station, i_depth],
-                 label=f'{depth} m')
+                 label=f'Nivel: {depth} ', marker='o')
 
     plt.xlabel('Fecha')
-    plt.ylabel('Chl (mg/m3)')
-    plt.title(f'Serie temporal de Chl en {station} en {northing[i_station]} y {easting[i_station]}')
-    plt.legend(title="Profundidad", fontsize=9)
+    plt.ylabel('O2')
+    plt.title(f'Serie temporal de oxy en {station} en {northing[i_station]} y {easting[i_station]}')
+    plt.legend(title="nivel de profundidad\n" \
+    "0:superficial, 1:medio, 2:profundo", fontsize=9)
     plt.grid(True)
     plt.tight_layout()
 

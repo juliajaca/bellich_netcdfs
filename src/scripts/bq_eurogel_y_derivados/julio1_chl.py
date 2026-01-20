@@ -10,13 +10,12 @@ sys.path.append("../")
 from generar_txt import generar_txt
 # %%
 n_dataset ='IEO_COMU_1'
-nombre_fichero = 'IEO_COMU_1_SAL' #TESIS DE JUANA CANO
-
-data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/060325_resumen_historicos.xlsx',  dtype={  
+nombre_fichero = 'IEO_COMU_1_CHL' #TESIS DE Juli
+data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/IEO_COMU(juanayjulio)julia.xlsx',  dtype={  
 "valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud', 'Referencia'])
 
 # %%
-oxy = data0.loc[(data0['var'] == 'sal') & (data0['Referencia'] == 'Excel ARG8182')]
+oxy = data0.loc[(data0['var'] == 'chl') & (data0['Referencia'] == 'Excel ARG8182')]
 print(data0.head())
 print(f'tiene una longitud de {len(data0)} filas')
 oxy = oxy.replace(np.nan, -9999) #reemplazo los nan por -9999 
@@ -28,8 +27,8 @@ estaciones_np = np.array(estaciones, dtype=f'S{max(len(s) for s in estaciones)}'
 
 
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Hydrodynamics/salinity/IEO_COMU_1/'
-path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Hydrodynamics/salinity/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/chlorophyll/IEO_COMU_1/'
+path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/chlorophyll/'
 
 data = oxy.sort_values(by=["fecha", "estacion", 'profundidad']).reset_index(drop=True)
 print('la longitud antes es', len(data))
@@ -48,7 +47,7 @@ ncfile.title = nombre_fichero
 ncfile.institution= "Oceanographic Center of Murcia (COMU), Spain"
 ncfile.domain= 'Mar menor coastal lagoon, Spain'
 ncfile.dataset_id = n_dataset
-ncfile.project ='Not associated with a specific project'
+ncfile.project ='OSTRAS'
 ncfile.source = 'In situ data collection'
 ncfile.Conventions = 'CF-1.8'
 
@@ -86,14 +85,13 @@ depth_var.positive = 'down'
 depth_var.comment = 'Depth values indicate position only (not measured depths): 0 m for surface, 5.25 m for seabed.'
 depth_var[:] = [0, 5.25]
 
-value_var = ncfile.createVariable('seawater_salinity', np.float32, ('time', 'station_name','depth'))
-value_var.units = '1'
-value_var.standard_name = 'sea_water_practical_salinity'
-value_var.long_name= 'Practical salinity of sea water'
+value_var = ncfile.createVariable('chlorophyll', np.float32, ('time', 'station_name','depth'))
+value_var.units = 'mg m-3'
+value_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
+value_var.long_name= 'Chlorophyll-a Concentration in Sea Water'
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.cell_methods  = 'time: mean'
-value_var.comment = 'Reported in Practical Salinity Units (PSU), which are dimensionless'
+value_var.comment = ''
 
 pivot = data.pivot_table(index='fecha',  columns=['estacion', 'profundidad'], values='valor')
 # Todas las fechas
@@ -147,7 +145,7 @@ print("\n🔹 Atributos Globales:")
 for attr in dataset.ncattrs():
     print(f"{attr}: {dataset.getncattr(attr)}")
 
-unit = dataset.variables['seawater_salinity'][:]
+unit = dataset.variables['chlorophyll'][:]
 stations = dataset.variables['station'][:]
 tiempo = dataset.variables["time"][:]  # Días desde 1970
 prof = dataset.variables['depth'][:]
@@ -192,8 +190,8 @@ for i_station, station in enumerate(stations):
                  label=f'{depth} m')
 
     plt.xlabel('Fecha')
-    plt.ylabel('seawater_salinity')
-    plt.title(f'Serie temporal de seawater_salinity en {station} en {northing[i_station]} y {easting[i_station]}')
+    plt.ylabel('Chl (mg/m3)')
+    plt.title(f'Serie temporal de Chl en {station} en {northing[i_station]} y {easting[i_station]}')
     plt.legend(title="Profundidad", fontsize=9)
     plt.grid(True)
     plt.tight_layout()

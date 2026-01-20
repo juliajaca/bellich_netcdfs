@@ -9,30 +9,27 @@ import sys
 sys.path.append("../")
 from generar_txt import generar_txt
 # %%
-n_dataset ='IEO_COMU_3'
-nombre_fichero = 'IEO_COMU_3_SPM' #TESIS DE JUANA CANO
-
+n_dataset ='IEO_COMU_1'
+nombre_fichero = 'IEO_COMU_1_SAL' #TESIS DE JUANA CANO
 
 data0 = pd.read_excel('C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Physico-chemical/IEO_EUROGEL/IEO_COMU(juanayjulio)julia.xlsx',  dtype={  
-"valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud', 'Referencia'])
+"valor": "float64", }, parse_dates= ['fecha'],  usecols= ['var', 'estacion', 'fecha','profundidad','valor' , 'muestreo', 'latitud', 'longitud', 'Referencia', 'Referencia'])
 
 # %%
-oxy = data0.loc[(data0['var'] == 'materia suspension (mg/l)') &  (data0['Referencia'] == 'Excel JC88-92')]
-
+oxy = data0.loc[(data0['var'] == 'sal') & (data0['Referencia'] == 'Excel ARG8182') ]
 print(data0.head())
 print(f'tiene una longitud de {len(data0)} filas')
 oxy = oxy.replace(np.nan, -9999) #reemplazo los nan por -9999 
 print(oxy.tail())
-
-# Creo que hay una fecha mal. En el excel pone 18/03/82, sospecho que es 18/03/92. Lo cambio en el excel
 # %%
-max_length_param = len("E1")
-estaciones = ['E1',  'E2', 'E3', 'E4', ]
+max_length_param = len("A")
+estaciones = ['A',  'B', 'C',  ]
 estaciones_np = np.array(estaciones, dtype=f'S{max(len(s) for s in estaciones)}')
 
+
 # %%
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/SPM/IEO_COMU_3/'
-path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/SPM/'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Hydrodynamics/salinity/IEO_COMU_1/'
+path_copia = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Hydrodynamics/salinity/'
 
 data = oxy.sort_values(by=["fecha", "estacion", 'profundidad']).reset_index(drop=True)
 print('la longitud antes es', len(data))
@@ -45,7 +42,7 @@ print(data.head())
 print(f'tiene una longitud de {len(data)} filas')
 
 # %%
-ncfile = Dataset(f"{path}{nombre_fichero}.nc", mode='w', format='NETCDF3_CLASSIC')
+ncfile = Dataset(f"{path}/{nombre_fichero}.nc", mode='w', format='NETCDF3_CLASSIC')
 
 ncfile.title = nombre_fichero
 ncfile.institution= "Oceanographic Center of Murcia (COMU), Spain"
@@ -74,13 +71,13 @@ lat_var = ncfile.createVariable('latitude', np.float64,('station_name') )
 lat_var.units = 'degrees_north'
 lat_var.standard_name = "latitude"
 lat_var.grid_mapping = "crs"
-lat_var[:] =  [ 37.79604, 37.75158, 37.67723, 37.70578,]
+lat_var[:] =  [ 37.783333, 37.7, 37.666667, ]
 
 lon_var = ncfile.createVariable('longitude', np.float64,('station_name') )
 lon_var.units = 'degrees_east'
 lon_var.standard_name = "longitude"
 lon_var.grid_mapping = "crs"
-lon_var[:] = [ -0.781283,-0.784307, -0.786973,-0.824049]
+lon_var[:] = [ -0.783333,-0.783333, -0.743333]
 
 depth_var = ncfile.createVariable('depth',np.float32, ('depth',))
 depth_var.units = 'meters'
@@ -89,13 +86,14 @@ depth_var.positive = 'down'
 depth_var.comment = 'Depth values indicate position only (not measured depths): 0 m for surface, 5.25 m for seabed.'
 depth_var[:] = [0, 5.25]
 
-value_var = ncfile.createVariable('suspended_particulate_matter', np.float32, ('time', 'station_name','depth'))
-value_var.units = 'mg L-1'
-value_var.standard_name = 'mass_concentration_of_suspended_matter_in_sea_water'
-value_var.long_name= 'Suspended Particulate Matter concentration'
+value_var = ncfile.createVariable('seawater_salinity', np.float32, ('time', 'station_name','depth'))
+value_var.units = '1'
+value_var.standard_name = 'sea_water_practical_salinity'
+value_var.long_name= 'Practical salinity of sea water'
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.comment = ''
+value_var.cell_methods  = 'time: mean'
+value_var.comment = 'Reported in Practical Salinity Units (PSU), which are dimensionless'
 
 pivot = data.pivot_table(index='fecha',  columns=['estacion', 'profundidad'], values='valor')
 # Todas las fechas
@@ -149,7 +147,7 @@ print("\n🔹 Atributos Globales:")
 for attr in dataset.ncattrs():
     print(f"{attr}: {dataset.getncattr(attr)}")
 
-unit = dataset.variables['suspended_particulate_matter'][:]
+unit = dataset.variables['seawater_salinity'][:]
 stations = dataset.variables['station'][:]
 tiempo = dataset.variables["time"][:]  # Días desde 1970
 prof = dataset.variables['depth'][:]
@@ -194,8 +192,8 @@ for i_station, station in enumerate(stations):
                  label=f'{depth} m')
 
     plt.xlabel('Fecha')
-    plt.ylabel('SPM (mg/l)')
-    plt.title(f'Serie temporal de suspended_particulate_matter en {station} en {northing[i_station]} y {easting[i_station]}')
+    plt.ylabel('seawater_salinity')
+    plt.title(f'Serie temporal de seawater_salinity en {station} en {northing[i_station]} y {easting[i_station]}')
     plt.legend(title="Profundidad", fontsize=9)
     plt.grid(True)
     plt.tight_layout()

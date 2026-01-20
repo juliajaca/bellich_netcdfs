@@ -1,3 +1,4 @@
+# %%
 from netCDF4 import Dataset, date2num,num2date, stringtochar
 import numpy as np
 import shutil
@@ -195,6 +196,7 @@ shutil.copy(path,f'{ruta_destino}{nombre_fichero}.nc')
 txt_filename = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Runoff/CHS_ALBUJON_v1/CHS_ALBUJON_V1_Q_ACCUM_DAILY.txt'
 ncfile = Dataset(path, "r")
 
+# %%
 with open(txt_filename, "w") as f:
     # Escribir el formato
     f.write(f"Format:\n\t{ncfile.file_format}\n")

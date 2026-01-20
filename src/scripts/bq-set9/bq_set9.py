@@ -11,52 +11,53 @@ from generar_txt import generar_txt
 n_dataset ='BELICH_BIOGQ_V2'
 dict = {
     'clorofila (espectofotometria)':{'nombre_fichero':f'{n_dataset}_CHL',
-                                    'v_name': 'chlorophyll',
+                                    'v_name': 'chlorophyl',
                                      'standard_name': 'mass_concentration_of_chlorophyll_in_sea_water',
                                      'long_name': 'Chlorophyll-a Concentration in Sea Water',
-                                     'comment':'Chlorophyll-a concentration determined via spectrophotometry following -standard/method name ???-'
-                                     'Original data assumed to be in mg m-3 ',
-                                     'units': 'ug L-1',
+                                    #  'comment':'Chlorophyll-a concentration determined via spectrophotometry following -standard/method name ???-'
+                                    #  'Original data assumed to be in mg m-3 ',
+                                     'comment':'Chlorophyll spectrophotometry ',
+                                     'units': 'mg m-3',
                                 'path':'chlorophyll'},
 
     'nitrato':{'v_name': 'nitrate',
                'nombre_fichero':f'{n_dataset}_NO3',
                'standard_name':'mole_concentration_of_nitrate_in_sea_water',
-                'long_name':'Nitrate concentration in sea water',
+                'long_name':'Dissolved nitrate concentration in sea water',
                   'units': 'umol L-1',
-                'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
+                # 'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
                 'path': 'nutrients/nitrate'},
 
     'nitrito':{'v_name': 'nitrite',
                'nombre_fichero':f'{n_dataset}_NO2',
                'standard_name':'mole_concentration_of_nitrite_in_sea_water',
-            'long_name': 'Nitrite concentration in sea water',
+            'long_name': 'Dissolved nitrite concentration in sea water',
               'units': 'umol L-1',
-            'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
+            # 'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
              'path': 'nutrients/nitrite'},
 
     'fosfato':{'v_name': 'phosphate',
                'nombre_fichero':f'{n_dataset}_PO4',
                'standard_name': 'mole_concentration_of_phosphate_in_sea_water',
-            'long_name': 'Phosphate concentration in sea water',
+            'long_name': ' Dissolved phosphate concentration in sea water',
             'units': 'umol L-1',
-            'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
+            # 'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
              'path': 'nutrients/phosphate'},
 
     'silicato':{'v_name': 'silicate',
                'nombre_fichero':f'{n_dataset}_SiO4',
                 'standard_name':'mole_concentration_of_silicate_in_sea_water',
-                'long_name': 'Silicate concentration in sea water',
+                'long_name': 'Dissolved silicate concentration in sea water',
                 'units': 'umol L-1',
-                'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
+                # 'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
                  'path': 'nutrients/silicate'},
 
     'amonio':{'v_name': 'ammonium',
                'nombre_fichero':f'{n_dataset}_NH4',
                 'standard_name':'mole_concentration_of_ammonium_in_sea_water',
+                'long_name': 'Dissolved ammonium concentration in sea water',
                 'units': 'umol L-1',
-                'long_name': 'Ammonium concentration in sea water',
-                'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
+                # 'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
                  'path': 'nutrients/ammonium'},
 
     'NID':{'v_name': 'din',
@@ -64,7 +65,7 @@ dict = {
             'standard_name':'mole_concentration_of_dissolved_inorganic_nitrogen_in_sea_water',
             'long_name': 'Dissolved inorganic nitrogen concentration in sea water',
             'units': 'umol L-1',
-            'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
+            # 'comment': 'Converted from original data assumed to be in mg/L to µmol/L',
             'path': 'nutrients/din'},
 
     'relacion NP':{'v_name': 'NPrelation',
@@ -215,7 +216,7 @@ def pintar_plot(fechas, value, nombre_variable, color = 'silver'):
 
     axs[-1].set_xlabel("Fecha")
     plt.tight_layout()
-    plt.savefig(f'resumen_belich_bg_{nombre_variable_nc}.pdf', format='pdf')
+    plt.savefig(f'{path}{dict[nombre_variable]["path"]}/{n_dataset}/resumen_belich_bg_{nombre_variable_nc}.pdf', format='pdf')
     plt.show()
 
 # %%
@@ -229,13 +230,13 @@ for nombre_variable in data0['Variable'].unique():
 
         fechas, value= comprobar_nc(nombre_variable)
 
-        # pintar_plot(fechas, value, nombre_variable, 'green')
+        pintar_plot(fechas, value, nombre_variable, 'green')
 
         generar_txt(f"{path}{dict[nombre_variable]['path']}/{n_dataset}/{dict[nombre_variable]['nombre_fichero']}.nc", 
                    f"{path}{dict[nombre_variable]['path']}/{n_dataset}/{dict[nombre_variable]['nombre_fichero']}.txt")
         
 
         shutil.copy(f"{path}{dict[nombre_variable]['path']}/{n_dataset}/{dict[nombre_variable]['nombre_fichero']}.nc",
-                    f"{path_copia}{dict[nombre_variable]['path']}/{n_dataset}/{dict[nombre_variable]['nombre_fichero']}.nc")
+                    f"{path_copia}{dict[nombre_variable]['path']}/{dict[nombre_variable]['nombre_fichero']}.nc")
 
 # %%

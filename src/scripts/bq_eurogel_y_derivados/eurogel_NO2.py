@@ -105,17 +105,17 @@ depth_var.positive = 'down'
 depth_var[:] = depths_bottom
 
 value_var = ncfile.createVariable('nitrite', np.float32, ('time', 'station_name', 'depth'))
-value_var.units = 'µmol/L'
+value_var.units = 'umol L-1'
 value_var.standard_name = 'mole_concentration_of_nitrite_in_sea_water'
-value_var.long_name = 'nitrite concentration in sea water'
+value_var.long_name = 'Dissolved nitrite concentration in sea water'
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
 value_var.comment = ''
 
 value_var2 = ncfile.createVariable('nitrite_at_bottom', np.float32, ('time', 'station_name'))
-value_var2.units = 'µmol/L'
+value_var2.units = 'umol L-1'
 value_var2.standard_name = 'mole_concentration_of_nitrite_in_sea_water'
-value_var2.long_name = 'Nitrite concentration in sea water'
+value_var2.long_name = 'Dissolved nitrite concentration in sea water'
 value_var2.missing_value = -9999
 value_var2.grid_mapping = "crs"
 value_var2.comment = 'Nitrite at bottom of the station'

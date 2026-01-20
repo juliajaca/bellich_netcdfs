@@ -75,18 +75,19 @@ lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
 # %%
 print(df_nitratos)
-valores_con_nan = ( df_nitratos *1000) / 62.0049 #paso de mg L-1 a umol L-1 
+# valores_con_nan = ( df_nitratos *1000) / 62.0049 #paso de mg L-1 a umol L-1 
+valores_con_nan = df_nitratos
 valores_con_nan[np.isnan(valores_con_nan)] = -9999
 print(valores_con_nan)
 value_var = ncfile.createVariable('nitrate', np.float64, ('time','station'))
 value_var.units= 'umol L-1'
 value_var.standard_name = "mole_concentration_of_nitrate_in_sea_water"
-value_var.long_name = 'Nitrate concentration in sea water'
+value_var.long_name = 'Dissolved nitrate concentration in sea water'
 value_var.cell_methods = "time: mean"
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
 value_var[:,:] = valores_con_nan
-value_var.comment  = "converted from original data assumed to be in mg/L to µmol/L "
+# value_var.comment  = "converted from original data assumed to be in mg/L to µmol/L "
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
 parameter_var.long_name = 'station'
@@ -153,7 +154,7 @@ plt.show()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrate/BELICH_NUT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrate/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 """
 .##....##.####.########.########..####.########..#######.
@@ -209,17 +210,18 @@ lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
 # %%
 print(df_nitritos)
-valores_con_nan = ( df_nitritos *1000) / 46.01 #paso de mg L-1 a umol L-1 
+# valores_con_nan = ( df_nitritos *1000) / 46.01 #paso de mg L-1 a umol L-1 
+valores_con_nan = df_nitritos
 valores_con_nan[np.isnan(valores_con_nan)] = -9999
 print(valores_con_nan)
 value_var = ncfile.createVariable('nitrite', np.float64, ('time','station'))
 value_var.units= 'umol L-1'
 value_var.standard_name = "mole_concentration_of_nitrite_in_sea_water"
-value_var.long_name = 'Nitrite concentration in sea water'
+value_var.long_name = 'Dissolved nitrite concentration in sea water'
 value_var.cell_methods = "time: mean"
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.comment  = "converted from original data assumed to be in mg/L to µmol/L "
+# value_var.comment  = "converted from original data assumed to be in mg/L to µmol/L "
 value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
@@ -289,7 +291,7 @@ plt.show()
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrite/BELICH_NUT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/nitrite/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
@@ -304,7 +306,7 @@ shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 """
 # %%
 nombre_fichero ='BELICH_NUT_PO4'
-path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/phosphate/BELICH_NUT'
+path = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/datasets_ncFormat/Biogeochemical/nutrients/phosphate/BELICH_NUT/'
 ncfile = Dataset(f'{path}{nombre_fichero}.nc', mode='w', format='NETCDF3_CLASSIC')
 print(ncfile)
 
@@ -345,18 +347,19 @@ lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
 print(df_fosfatos)
-valores_con_nan = ( df_fosfatos *1000) / 94.97 #paso de mg L-1 a umol L-1 
+# valores_con_nan = ( df_fosfatos *1000) / 94.97 #paso de mg L-1 a umol L-1 
+valores_con_nan = df_fosfatos
 valores_con_nan[np.isnan(valores_con_nan)] = -9999
 print(valores_con_nan)
 
 value_var = ncfile.createVariable('phosphate', np.float64, ('time','station'))
 value_var.units= 'umol L-1'
 value_var.standard_name= 'mole_concentration_of_phosphate_in_sea_water'
-value_var.long_name = 'Phosphate concentration in sea water'
+value_var.long_name = 'Dissolved phosphate concentration in sea water'
 value_var.cell_methods = "time: mean"
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+# value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
 value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
@@ -424,7 +427,7 @@ plt.show()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/phosphate/BELICH_NUT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/phosphate/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
@@ -453,9 +456,10 @@ ncfile.comment = 'Values of -1, indicating concentrations below the detection li
 # %%
 df_silicatos =  data.iloc[:, [4,10,16]]
 print(df_silicatos)
-valores_con_nan = ( df_silicatos *1000) / 96.06 #paso de mg L-1 a umol L-1 
-valores_con_nan[np.isnan(valores_con_nan)] = -9999
-print(valores_con_nan)
+# valores_con_nan = ( df_silicatos *1000) / 96.06 #paso de mg L-1 a umol L-1 
+# valores_con_nan[np.isnan(valores_con_nan)] = -9999
+df_silicatos[np.isnan(df_silicatos)] = -9999
+print(df_silicatos)
 
 ncfile.createDimension('time', len(dias_desde_1970))
 ncfile.createDimension('unit_char_len', max_length_param)
@@ -486,12 +490,12 @@ lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 value_var = ncfile.createVariable('silicate', np.float64, ('time','station'))
 value_var.units= 'umol L-1'
 value_var.standard_name = "mole_concentration_of_silicate_in_sea_water"
-value_var.long_name = 'Silicate concentration in sea water'
+value_var.long_name = 'Dissolved silicate concentration in sea water'
 value_var.cell_methods = "time: mean"
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
-value_var[:,:] = valores_con_nan
+# value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+value_var[:,:] = df_silicatos
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
 parameter_var.long_name = 'station'
@@ -559,7 +563,7 @@ plt.show()
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/silicate/BELICH_NUT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/silicate/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%
 """
@@ -613,18 +617,19 @@ lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 # %%
 print(df_amonio)
-valores_con_nan = ( df_amonio *1000) / 18.04 #paso de mg L-1 a umol L-1 
+# valores_con_nan = ( df_amonio *1000) / 18.04 #paso de mg L-1 a umol L-1 
+valores_con_nan = df_amonio
 valores_con_nan[np.isnan(valores_con_nan)] = -9999
 print(valores_con_nan)
 
 value_var = ncfile.createVariable('ammonium', np.float64, ('time','station'))
 value_var.units= 'umol L-1'
 value_var.standard_name = "mole_concentration_of_ammonium_in_sea_water"
-value_var.long_name = 'Ammonium concentration in sea water'
+value_var.long_name = 'Dissolved ammonium concentration in sea water'
 value_var.cell_methods = "time: mean"
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+# value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
 value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
@@ -692,7 +697,7 @@ plt.show()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/ammonium/BELICH_NUT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/ammonium/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 
 # %% 
@@ -747,8 +752,9 @@ lon_var.standard_name = "longitude"
 lon_var.grid_mapping = "crs"
 lon_var[:] = [ -0.78331724, -0.78319145 ,-0.75235986]
 
-print(df_amonio)
-valores_con_nan = ( df_amonio *1000) / 14.01 #paso de mg L-1 a umol L-1 
+print(df_din)
+# valores_con_nan = ( df_din *1000) / 14.01 #paso de mg L-1 a umol L-1 
+valores_con_nan = df_din
 valores_con_nan[np.isnan(valores_con_nan)] = -9999
 print(valores_con_nan)
 
@@ -759,7 +765,7 @@ value_var.long_name = 'Dissolved inorganic nitrogen concentration in sea water'
 value_var.cell_methods = "time: mean"
 value_var.missing_value = -9999
 value_var.grid_mapping = "crs"
-value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
+# value_var.comment  = "Converted from original data assumed to be in mg/L to µmol/L "
 value_var[:,:] = valores_con_nan
 
 parameter_var = ncfile.createVariable('station_name', 'S1', ('station', 'unit_char_len'))
@@ -827,6 +833,6 @@ plt.show()
 # %%
 generar_txt(f'{path}{nombre_fichero}.nc', f'{path}{nombre_fichero}.txt')
 # %%
-ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/din/BELICH_NUT/'
+ruta_destino = 'C:/Users/Julia/Nextcloud/Datos_MM_Art_2025/Repository/Biogeochemical/nutrients/din/'
 shutil.copy(f'{path}{nombre_fichero}.nc',f'{ruta_destino}{nombre_fichero}.nc')
 # %%

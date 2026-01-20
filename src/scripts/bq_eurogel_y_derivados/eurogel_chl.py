@@ -93,7 +93,7 @@ depth_var.comment = 'Depth values missing. 0 is used instead of NaN.'
 depth_var[:] = 0
 
 value_var = ncfile.createVariable('chlorophyll', np.float32, ('time', 'station_name',))
-value_var.units = 'mg/m3'
+value_var.units = 'mg m-3'
 value_var.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'
 value_var.long_name= 'Chlorophyll-a Concentration in Sea Water'
 value_var.missing_value = -9999
